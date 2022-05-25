@@ -1,5 +1,5 @@
 .carousel .carousel-item {
-    height: 94vh;
+    height: 99vh;
 }
 
 .carousel-item img {
@@ -20,4 +20,13 @@
     -webkit-transform-style: preserve-3d;
     -moz-transform-style: preserve-3d;
     transform-style: preserve-3d;
+}
+
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link, .navbar-brand {
+    color: #7CFC00;
 }
