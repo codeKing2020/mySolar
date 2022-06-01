@@ -1,0 +1,17 @@
+{% extends 'mySolar/layout.html' %}
+
+{% block title %}
+    Add new item
+{% endblock  %}
+
+{% block body %}
+    <div class="container" style="margin-top: 150px;">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="" type="submit">
+                Post
+            </button>
+        </form>
+    </div>
+{% endblock %}
