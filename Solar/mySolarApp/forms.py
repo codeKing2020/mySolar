@@ -1,8 +1,8 @@
 from django import forms
-from .models import store_item
+from .models import Product
 
 class storeItemForm(forms.ModelForm):
 
     class Meta:
-        model = store_item
+        model = Product
         exclude = ("user", )

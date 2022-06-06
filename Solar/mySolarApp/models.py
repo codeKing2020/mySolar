@@ -1,16 +1,68 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 
 # Create your models here.
-class User(AbstractUser):
-    pass
+class User(AbstractBaseUser):
+    username = models.CharField(max_length=64, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    contact_info = models.CharField(max_length=15, blank=True)
 
-class store_item(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="emails")
-    pic = models.CharField("Link to picture", max_length=1000)
-    short_desc = models.CharField("Short Description", max_length=150)
-    long_desc = models.CharField("Long Description", max_length=5000)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    is_active = True
+    is_shopkeeper = False
+
+    USERNAME_FIELD = 'username'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
-        return self.title
+        return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'
+
+class Profile(models.Model):
+    shopkeeper = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64)
+    desc = models.CharField(max_length=1000)
+    profile_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+    banner_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+class Product(models.Model):
+    # Categories - choices
+    SLP = "SLP" # solar panels
+    BAT = "BAT" # batteries
+    INV = "INV" # inverters
+    CHA_CTRL = "CHA_CTRL" # charge controllers 
+    WAT_PUMPS = "WAT_PUMPS" # water pumps
+    ACC = "ACC" # accessories
+    TOOLS = "TOOLS" # tools
+    MISC = "MISC" # miscellaneous 
+    
+
+    CATEGORY = [
+        (SLP, "Solar Panels"),
+        (BAT, "Batteries"),
+        (INV, "Inverters"),
+        (CHA_CTRL, "Charge Controllers"),
+        (WAT_PUMPS, "Water Pumps"),
+        (ACC, "Accessories"),
+        (TOOLS, "Tools"),
+        (MISC, "Miscellaneous/Other"),
+    ]
+
+    seller = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="emails")
+    title = models.CharField(max_length=64)
+    pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='product_images')
+    short_desc = models.CharField("Short Description", max_length=150)
+    long_desc = models.CharField("Long Description", max_length=5000)
+    category = models.CharField(max_length=10, choices=CATEGORY, default=MISC)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    in_stock = models.BooleanField(default=True) 
+    is_closed = False
+
+    def __str__(self):
+        return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'
+
+class delivery_info(models.Model):
+    item = models.ForeignKey(Product, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    delivery_date = models.DateTimeField()
+    location = models.CharField(max_length=256)
+    processed = False
