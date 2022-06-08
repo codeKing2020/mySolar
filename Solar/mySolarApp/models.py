@@ -17,9 +17,8 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'
-
 class Profile(models.Model):
-    shopkeeper = models.OneToOneField(User, on_delete=models.CASCADE)
+    shopkeeper = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     desc = models.CharField(max_length=1000)
     profile_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
@@ -47,7 +46,7 @@ class Product(models.Model):
         (MISC, "Miscellaneous/Other"),
     ]
 
-    seller = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="emails")
+    seller = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="product_seller")
     title = models.CharField(max_length=64)
     pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='product_images')
     short_desc = models.CharField("Short Description", max_length=150)
@@ -61,8 +60,20 @@ class Product(models.Model):
         return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'
 
 class delivery_info(models.Model):
-    item = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    # payment methods
+    ONPOINT = "On point"
+    ONLINE = "Online"
+
+    PAYMENT = [
+        (ONPOINT, "On point"),
+        (ONLINE, "Online")
+    ]
+
+    item = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name="product_deliveryInfo")
+    amount_of_item = models.IntegerField(null=False, default=1)
+    customer = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField()
     location = models.CharField(max_length=256)
     processed = False
+    payment_method = models.CharField(max_length=10, choices=PAYMENT, default=ONPOINT)
+
