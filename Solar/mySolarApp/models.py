@@ -1,22 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class User(AbstractBaseUser):
-    username = models.CharField(max_length=64, unique=True)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+class User(AbstractUser):
     contact_info = models.CharField(max_length=15, blank=True)
-
-    is_active = True
-    is_shopkeeper = False
-
-    USERNAME_FIELD = 'username'
-    EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ['email']
+    is_shopkeeper = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'
+
 class Profile(models.Model):
     shopkeeper = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
@@ -46,7 +38,7 @@ class Product(models.Model):
         (MISC, "Miscellaneous/Other"),
     ]
 
-    seller = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="product_seller")
+    seller = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="product_seller")
     title = models.CharField(max_length=64)
     pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='product_images')
     short_desc = models.CharField("Short Description", max_length=150)
@@ -54,7 +46,7 @@ class Product(models.Model):
     category = models.CharField(max_length=10, choices=CATEGORY, default=MISC)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     in_stock = models.BooleanField(default=True) 
-    is_closed = False
+    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'
@@ -74,6 +66,6 @@ class delivery_info(models.Model):
     customer = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField()
     location = models.CharField(max_length=256)
-    processed = False
+    processed = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=10, choices=PAYMENT, default=ONPOINT)
 
