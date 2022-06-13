@@ -9,12 +9,14 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'
 
+
 class Profile(models.Model):
     shopkeeper = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     desc = models.CharField(max_length=1000)
     profile_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
     banner_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+
 class Product(models.Model):
     # Categories - choices
     SLP = "SLP" # solar panels
@@ -61,10 +63,10 @@ class delivery_info(models.Model):
         (ONLINE, "Online")
     ]
 
-    item = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name="product_deliveryInfo")
+    item = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_deliveryInfo")
     amount_of_item = models.IntegerField(null=False, default=1)
-    customer = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="customer_deliveryInfo")
-    delivery_date = models.DateTimeField()
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer_deliveryInfo")
+    delivery_date = models.DateTimeField(verbose_name=("Delivery Date"), auto_now_add=False, null=False, blank=False)
     location = models.CharField(max_length=256)
     processed = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=10, choices=PAYMENT, default=ONPOINT)

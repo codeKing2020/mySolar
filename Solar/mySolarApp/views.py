@@ -3,7 +3,7 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 
-from .forms import storeItemForm
+from .forms import *
 from .models import User
 from django.db import IntegrityError
 
@@ -60,11 +60,11 @@ def register(request):
     else:
         return render(request, "mySolar/register.html")
 
-def makeItem(request):
+def test(request):
     if request.method == "POST":
-        form = storeItemForm(request.POST)
+        form = delivery_infoForm(request.POST)
         if form.is_valid():
             return HttpResponse("Safe!")
     else:
-        form = storeItemForm()
-        return render(request, "mySolar/makeItem.html", {"form": form})
+        form = delivery_infoForm()
+        return render(request, "mySolar/test.html", {"form": form})
