@@ -62,9 +62,11 @@ def register(request):
 
 def test(request):
     if request.method == "POST":
-        form = delivery_infoForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
-            return HttpResponse("Safe!")
+            return HttpResponse(f"Safe! You entered {form}")
+        else:
+            return HttpResponse(f"Not Safe! You entered {form}")
     else:
-        form = delivery_infoForm()
+        form = UserForm()
         return render(request, "mySolar/test.html", {"form": form})

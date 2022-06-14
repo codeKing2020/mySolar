@@ -6,7 +6,7 @@
 
 {% block body %}
     <div class="container" style="margin-top: 150px;">
-        <form method="post">
+        <form method="post" action="{% url 'test' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button class="" type="submit">
@@ -14,4 +14,5 @@
             </button>
         </form>
     </div>
+    <a href="{% url 'index' %}">Home</a>
 {% endblock %}
