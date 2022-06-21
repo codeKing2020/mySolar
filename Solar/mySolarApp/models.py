@@ -70,4 +70,3 @@ class delivery_info(models.Model):
     location = models.CharField(max_length=256)
     processed = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=10, choices=PAYMENT, default=ONPOINT)
-

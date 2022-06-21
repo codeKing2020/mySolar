@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
-
+from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import User
 from django.db import IntegrityError
@@ -69,4 +69,18 @@ def test(request):
             return HttpResponse(f"Not Safe! You entered {form}")
     else:
         form = UserForm()
+        return render(request, "mySolar/test.html", {"form": form})
+
+
+
+@login_required
+def profileForm(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            return HttpResponse(f"Safe! You entered {form}")
+        else:
+            return render(request, "mySolar/test.html", {"form": form})
+    else:
+        form = ProfileForm()
         return render(request, "mySolar/test.html", {"form": form})
