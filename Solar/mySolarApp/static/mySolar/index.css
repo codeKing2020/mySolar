@@ -1,4 +1,32 @@
 * {
   box-sizing: border-box;
-  overflow: hidden;
+}
+
+/* FOR NAVBARS */
+
+.text-small {
+  font-size: 85%;
+}
+
+.dropdown-toggle {
+  outline: 0;
+}
+
+.green-text {
+  color: #7CFC00;
+}
+
+/* FOR INDEX: MAIN BODY */
+
+.featurette {
+  padding: 5%;
+  font-size: 1.3rem;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center; /* try adding baseline instead */
+  /* ADD flex wrap functionalitites for media queries */
+}
+.center-button {
+  text-align: center;
 }

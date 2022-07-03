@@ -11,13 +11,12 @@ from django.db import IntegrityError
 def index(request):
     return render(request, "mySolar/index.html")
 
-def login(request):
+def sign_in(request):
     if request.method == "POST":
-
         # Attempt to sign user in
-        email = request.POST["email"]
+        username = request.POST["username"]
         password = request.POST["password"]
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
         if user is not None:
@@ -25,7 +24,7 @@ def login(request):
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "mySolar/login.html", {
-                "message": "Invalid email and/or password."
+                "message": "Invalid username and/or password."
             })
     else:
         return render(request, "mySolar/login.html")
@@ -37,6 +36,29 @@ def logout_view(request):
 def register(request):
     if request.method == "POST":
         email = request.POST["email"]
+        username = request.POST["username"]
+
+        if email == '':
+            return render(request, "mySolar/register.html", {
+                "message": "Enter your email address"
+            })
+
+        if username == '':
+            return render(request, "mySolar/register.html", {
+                "message": "Enter your username"
+            })
+
+        # Ensure unique username
+        if User.objects.filter(username=username).exists():
+            return render(request, "mySolar/register.html", {
+                "message": "Username already exists"
+            })
+        
+        # Ensure unique email
+        if User.objects.filter(email=email).exists():
+            return render(request, "mySolar/register.html", {
+                "message": "Email address already exists"
+            })
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -48,30 +70,17 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(email, email, password)
+            user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError as e:
             print(e)
             return render(request, "mySolar/register.html", {
-                "message": "Email address already taken."
+                "message": "Error! Try use a different or longer username or email address"
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "mySolar/register.html")
-
-def test(request):
-    if request.method == "POST":
-        form = UserForm(request.POST)
-        if form.is_valid():
-            return HttpResponse(f"Safe! You entered {form}")
-        else:
-            return HttpResponse(f"Not Safe! You entered {form}")
-    else:
-        form = UserForm()
-        return render(request, "mySolar/test.html", {"form": form})
-
-
 
 @login_required
 def profileForm(request):
