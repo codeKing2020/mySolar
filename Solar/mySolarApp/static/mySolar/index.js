@@ -17,8 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("login").style.display = "block";
             document.getElementById("register").style.display = "none";
         }
-    }
-    
+    };
+
+    document.querySelectorAll('button').forEach(button => {
+
+        // When a button is clicked, switch to that page
+        button.onclick = function() {
+            showPage(this.dataset.button);
+        }
+    })
+
     // Start off the index with main-text
-    showPage("main-text")
+    showPage("main-text");
 });

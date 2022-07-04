@@ -21,8 +21,8 @@ Welcome to MySolar | Home
             <h1 class="display-5 fw-bold lh-1 mb-3">Responsive left-aligned hero with image</h1>
             <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Primary</button>
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Default</button>
+                <button data-button="register" type="button" class="btn btn-primary btn-lg px-4 me-md-2">Join</button>
+                <button data-button="login" type="button" class="btn btn-outline-secondary btn-lg px-4">Sign In</button>
             </div>
             </div>
         </div>
@@ -94,7 +94,7 @@ Welcome to MySolar | Home
         <form action="{% url 'login' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
-                <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                <input class="form-control" type="text" name="username" placeholder="Username">
             </div>
             <div class="form-group">
                 <input class="form-control" type="password" name="password" placeholder="Password">
