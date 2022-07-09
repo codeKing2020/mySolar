@@ -21,8 +21,8 @@ Welcome to MySolar | Home
             <h1 class="display-5 fw-bold lh-1 mb-3">Responsive left-aligned hero with image</h1>
             <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <button data-button="register" type="button" class="btn btn-primary btn-lg px-4 me-md-2">Join</button>
-                <button data-button="login" type="button" class="btn btn-outline-secondary btn-lg px-4">Sign In</button>
+                <a href="{% url 'register' %}"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Join</button></a>
+                <a href="{% url 'login' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Sign In</button></a>
             </div>
             </div>
         </div>
@@ -79,60 +79,6 @@ Welcome to MySolar | Home
     <div class="center-button mb-5">
         <h2>Finished! WELL DONE!</h2>
         <a href="#" class="btn btn-outline-success btn-lg btn-block">Now give me a high FIVE!</a>
-    </div>
-</div>
-
-<div id="login">
-    <div class="container mt-5">
-
-        <h2>Login</h2>
-
-        {% if message %}
-            <div>{{ message }}</div>
-        {% endif %}
-
-        <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <input class="form-control" type="text" name="username" placeholder="Username">
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="password" name="password" placeholder="Password">
-            </div>
-            <input class="btn btn-primary" type="submit" value="Login">
-        </form>
-
-        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-
-    </div>
-</div>
-
-<div id="register">
-    <div class="container mt-5">
-        <h2>Register</h2>
-
-        {% if message %}
-            <div>{{ message }}</div>
-        {% endif %}
-
-        <form action="{% url 'register' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <input class="form-control" type="text" name="username" placeholder="Username" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="email" name="email" placeholder="Email Address" autocomplete="email">
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="password" name="password" placeholder="Password">
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-            </div>
-            <input class="btn btn-primary" type="submit" value="Register">
-        </form>
-
-        Already have an account? <a href="{% url 'login' %}">Log In here.</a>
     </div>
 </div>
 {% endblock %}

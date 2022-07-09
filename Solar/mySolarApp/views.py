@@ -82,6 +82,24 @@ def register(request):
     else:
         return render(request, "mySolar/register.html")
 
+def about(request):
+    return render(request, "mySolar/about.html")
+
+def contact(request):
+    return render(request, "mySolar/contact.html")
+
+def shop(request):
+    return render(request, "mySolar/store.html")
+
+def product(request):
+    return render(request, "mySolar/product.html")
+
+def help(request):
+    return render(request, "mySolar/help.html")
+
+def beSeller(request):
+    return render(request, "mySolar/beSeller.html")
+
 @login_required
 def profileForm(request):
     if request.method == "POST":

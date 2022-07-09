@@ -1,0 +1,25 @@
+{% extends 'mySolar/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+More Info
+{% endblock %}
+
+{% block body %}
+<h1>More Info on ____</h1>
+<div class="d-md-flex flex-md-row justify-content-md-around align-items-center">
+    <section class="img-section float-md-start">
+        <img src="{% static 'respect1000.jpg' %}" class="img-fluid flex-fill" alt="...">
+    </section>
+    <div class="productDivider"></div>
+    <section class="info-section float-md-end">
+        <h2>Yo!</h2>
+        <p>Here's some info about this product!</p>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum nostrum id atque tempore aliquam pariatur excepturi placeat. Eligendi, ea aut fuga non omnis, quo ut atque quis voluptatem numquam doloremque.</p>
+        <p>Sold by <b>this_person</b></p>
+        <button class="btn btn-outline-success">Buy</button>
+        <button class="btn btn-outline-primary">Add to cart</button>
+    </section>
+</div>
+{% endblock %}

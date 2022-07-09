@@ -1,0 +1,24 @@
+{% extends 'mySolar/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+Store | mySolar
+{% endblock %}
+
+{% block body %}
+<h1>Store</h1>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 mb-3 ">
+  <div class="col gap-4">
+    <div class="card h-100">
+      <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Respect</h5>
+        <p class="card-text">This is a post I respect so much</p>
+        <button class="btn btn-outline-primary card-link">Respect</button>
+        <button class="btn btn-outline-secondary card-link">It's ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

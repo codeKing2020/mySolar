@@ -30,3 +30,56 @@
 .center-button {
   text-align: center;
 }
+
+/* FOR ABOUT PAGE */
+.img-area {
+  display: block;
+  margin: auto 5rem;
+  padding: 5%;
+  text-align: center;
+}
+
+/* FOR PRODUCT INFO PAGE */
+.productDivider {
+  height: 100%;
+  width: 25px;
+}
+
+.img-section {
+  width: 50%;
+  padding: 4%;
+  margin: 2%;
+}
+
+.info-section {
+  width: 47%;
+  padding: 4%;
+  margin: 2%;
+}
+
+@media screen and (max-width: 767px) {
+  .img-section {
+    width: 100%;
+    padding: 4%;
+    margin: 2%;
+  }
+  
+  .info-section {
+    width: 100%;
+    padding: 4%;
+    margin: 2%;
+  }
+}
+
+/* HELP PAGE */
+
+input, textarea {
+  font-size: .8rem;
+  letter-spacing: 1px;
+  padding: 10px;
+  max-width: 100%;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+}
