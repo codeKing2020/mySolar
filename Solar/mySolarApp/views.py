@@ -6,28 +6,35 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import User
 from django.db import IntegrityError
+from django.shortcuts import redirect
 
 # Create your views here.
 def index(request):
     return render(request, "mySolar/index.html")
 
 def sign_in(request):
-    if request.method == "POST":
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "mySolar/login.html", {
-                "message": "Invalid username and/or password."
-            })
+    next_page = request.POST.get('next')
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(next_page)
     else:
-        return render(request, "mySolar/login.html")
+        if request.method == "POST":
+            # Attempt to sign user in
+            username = request.POST["username"]
+            password = request.POST["password"]
+            user = authenticate(request, username=username, password=password)
+
+            # Check if authentication successful
+            if user is not None:
+                login(request, user)
+                if next_page is not None or next_page != "":
+                    return HttpResponseRedirect(next_page)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                return render(request, "mySolar/login.html", {
+                    "message": "Invalid username and/or password."
+                })
+        else:
+            return render(request, "mySolar/login.html")
 
 def logout_view(request):
     logout(request)
@@ -97,6 +104,7 @@ def product(request):
 def help(request):
     return render(request, "mySolar/help.html")
 
+@login_required
 def beSeller(request):
     return render(request, "mySolar/beSeller.html")
 
