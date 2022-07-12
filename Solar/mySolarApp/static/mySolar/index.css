@@ -2,6 +2,29 @@
   box-sizing: border-box;
 }
 
+input, textarea {
+  font-size: .8rem;
+  letter-spacing: 1px;
+  padding: 14px;
+  max-width: 100%;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+  margin: 8px;
+  width: 75%;
+  text-align: center;
+}
+label {
+  font-size: 1.2rem;
+  display: block;
+  font-weight: bold;
+}
+form {
+  text-align: center;
+  margin: auto auto;
+}
+
 /* FOR NAVBARS */
 
 .text-small {
@@ -69,18 +92,4 @@
     padding: 4%;
     margin: 2%;
   }
-}
-
-/* HELP PAGE */
-
-input, textarea {
-  font-size: .8rem;
-  letter-spacing: 1px;
-  padding: 22px;
-  max-width: 100%;
-  line-height: 1.5;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-shadow: 1px 1px 1px #999;
-  margin: 10px;
 }

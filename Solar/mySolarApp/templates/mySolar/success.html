@@ -1,0 +1,17 @@
+{% extends 'mySolar/layout.html' %}
+
+{% block title %}
+Thank you for registering to become a seller | mySolar
+{% endblock %}
+
+{% block body %}
+    {% if success == "pendingSellerConfirmation" %}
+        <h1>Thank you for registering</h1>
+        <p class="fs-3">Thank you {{ request.user.get_username.capitalize }} for registering to become a seller, your request and shop location will be verified and you will be emailed within 5 days.</p>
+    {% elif success == "pendingHelp" %}
+        <h1>Thank you for asking</h1>
+        <p>This helps us imporve our website and user experience, check back in less than 24 hours to see if your question was answered</p>
+    {% else %}
+        <h1 class="text-center">Nothing to see here!</h1>
+    {% endif %}
+{% endblock %}

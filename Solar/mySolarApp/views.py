@@ -13,9 +13,13 @@ def index(request):
     return render(request, "mySolar/index.html")
 
 def sign_in(request):
+    # get the next info from the POST area (forms)
     next_page = request.POST.get('next')
+    # if the user is authenticated
     if request.user.is_authenticated:
-        return HttpResponseRedirect(next_page)
+        if next_page is not None:
+            return HttpResponseRedirect(next_page)
+        return HttpResponseRedirect("index")
     else:
         if request.method == "POST":
             # Attempt to sign user in
@@ -25,14 +29,20 @@ def sign_in(request):
 
             # Check if authentication successful
             if user is not None:
+                # keep user info in session
                 login(request, user)
-                if next_page is not None or next_page != "":
+                # if there is a page they have to go to next
+                if next_page is not None:
+                    # go to it
                     return HttpResponseRedirect(next_page)
+                # else just redirect to the home page
                 return HttpResponseRedirect(reverse("index"))
+            # there were wrong details entered
             else:
                 return render(request, "mySolar/login.html", {
                     "message": "Invalid username and/or password."
                 })
+        # this was a GET request    
         else:
             return render(request, "mySolar/login.html")
 
@@ -41,15 +51,19 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 def register(request):
+    # if we received a POST method request
     if request.method == "POST":
+        # take email and username info
         email = request.POST["email"]
         username = request.POST["username"]
 
+        # ensure email field isn't empty
         if email == '':
             return render(request, "mySolar/register.html", {
                 "message": "Enter your email address"
             })
 
+        # ensure username field isn't empty
         if username == '':
             return render(request, "mySolar/register.html", {
                 "message": "Enter your username"
@@ -86,6 +100,7 @@ def register(request):
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
+    # else our request method is a GET request
     else:
         return render(request, "mySolar/register.html")
 
@@ -105,17 +120,46 @@ def help(request):
     return render(request, "mySolar/help.html")
 
 @login_required
-def beSeller(request):
-    return render(request, "mySolar/beSeller.html")
+def success(request):
+    return render(request, "mySolar/success.html")
 
 @login_required
-def profileForm(request):
-    if request.method == "POST":
-        form = ProfileForm(request.POST)
-        if form.is_valid():
-            return HttpResponse(f"Safe! You entered {form}")
+def beSeller(request):
+    if request.method == 'POST':
+        
+        user_form = SellerRequestForm(request.POST)
+
+        if user_form.is_valid():
+            user_form.instance.sellerAcc = request.user
+            user_form.save()
+            return redirect('/success', success="pendingSellerConfirmation")        
+
         else:
-            return render(request, "mySolar/test.html", {"form": form})
+            context = {
+                'user_form': user_form,
+            }
+
     else:
-        form = ProfileForm()
-        return render(request, "mySolar/test.html", {"form": form})
+        context = {
+            'user_form': SellerRequestForm(user=request.user),
+        }
+
+    return render(request, "mySolar/beSeller.html", context)
+
+def help(request):
+    if request.method == "POST":
+        question_form = askQuestionForm(request.POST)
+
+        if question_form.is_valid():
+            question_form.save()
+            return redirect('/success', success="pendingHelp")
+        else:
+            context = {
+                'question_form': question_form,
+            }
+    else:
+        context = {
+            'question_form': askQuestionForm(),
+        }
+
+    return render(request, "mySolar/help.html", context)
