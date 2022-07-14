@@ -1,0 +1,60 @@
+{% extends 'mySolar/layout.html' %}
+
+{% block title %}
+requests and questions
+{% endblock %}
+
+{% block body %}
+<button class="btn btn-outline-primary d-block mx-auto text-center">requests</button>
+<button class="btn btn-outline-primary d-block mx-auto text-center">questions</button>
+<div class="requests">
+    <table class="table table-hover table-dark">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Seller First Name</th>
+                <th scope="col">Seller Last Name</th>
+                <th scope="col">Business Name</th>
+                <th scope="col">Business Email</th>
+                <th scope="col">Business Location</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for seller in requests %}
+            <tr>
+                <th scope="row">{{ seller.pk }}</th>
+                <td>{{seller.sellerFName}}</td>
+                <td>{{seller.sellerLName}}</td>
+                <td>{{seller.name}}</td>
+                <td>{{seller.businessEmail}}</td>
+                <td>{{seller.location}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="questions">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Question</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for question in questions %}
+            <tr>
+                <th scope="row">{{ question.pk }}</th>
+                <td>{{question.question}}</td>
+                {% if question.email == '' %}
+                    <td>NULL</td>
+                {% else %}
+                    <td>{{question.email}}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

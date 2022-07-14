@@ -48,11 +48,13 @@ class delivery_infoForm(forms.ModelForm):
 
 class askQuestionForm(forms.ModelForm):
     class Meta:
-        model = help
+        model = userQuestions
         exclude = ("is_FAQ",)
         labels = {
+            "email": "What is your email?",
             "question": "What can we help you with?"
         }
         widgets = {
+            "email": forms.TextInput(attrs={'placeholder': 'We will email you our response ASAP.'}),
             "question": forms.Textarea(attrs={'placeholder': 'Ask anything!'})
         }

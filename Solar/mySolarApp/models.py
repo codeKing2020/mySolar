@@ -14,10 +14,12 @@ class User(AbstractUser):
         last_name
         email
         password
+        beSellerFormSubmitted
 
         useful information regarding this model can be found at https://docs.djangoproject.com/en/4.0/ref/contrib/auth/#django.contrib.auth.models.User
         including info about getting full name or changing password etc
     """
+    beSellerFormSubmitted = models.BooleanField(default=False)
     contact_info = models.CharField(max_length=15, blank=True)
     is_shopkeeper = models.BooleanField(default=False)
 
@@ -145,12 +147,14 @@ class sellerRequests(models.Model):
     how_active = models.IntegerField()
     identification = models.CharField(max_length=13, unique=True, blank=False)
 
-class help(models.Model):
+class userQuestions(models.Model):
     """
     help model 
 
     for storing any questions asked by users
+    takes email also
     also stores FAQs which are saved and accessed by page
     """
+    email = models.EmailField(blank=True)
     question = models.CharField(max_length=1000, blank=False, unique=True)
     is_FAQ = models.BooleanField(default=False)

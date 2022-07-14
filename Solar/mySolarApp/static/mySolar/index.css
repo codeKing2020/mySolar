@@ -93,3 +93,13 @@ form {
     margin: 2%;
   }
 }
+
+/* FOR FORM ERRORS */
+
+.errorlist{
+  text-align: center;
+  font-size: 21px;
+  color: white;
+  border: red 1px solid;
+  background-color: red;
+}

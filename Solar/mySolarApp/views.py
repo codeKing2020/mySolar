@@ -115,33 +115,38 @@ def shop(request):
 
 def product(request):
     return render(request, "mySolar/product.html")
-
-def help(request):
-    return render(request, "mySolar/help.html")
-
+    
 @login_required
 def success(request):
     return render(request, "mySolar/success.html")
 
 @login_required
 def beSeller(request):
+    USER = request.user
     if request.method == 'POST':
-        
-        user_form = SellerRequestForm(request.POST)
+        a = User.objects.get(username=USER.get_username())
+        if a.beSellerFormSubmitted == False:
+            user_form = SellerRequestForm(request.POST)
 
-        if user_form.is_valid():
-            user_form.instance.sellerAcc = request.user
-            user_form.save()
-            return redirect('/success', success="pendingSellerConfirmation")        
+            if user_form.is_valid():
+                user_form.instance.sellerAcc = USER
+                user_form.save()
+                a.update(beSellerFormSubmitted=True)
+                return render(request, 'mySolar/success.html', {"success":"pendingSellerConfirmation"})        
+                
+            else:
+                context = {
+                    'user_form': user_form,
+                }
 
         else:
             context = {
-                'user_form': user_form,
-            }
+                "success":"alreadyApplied",
+                }
 
     else:
         context = {
-            'user_form': SellerRequestForm(user=request.user),
+            'user_form': SellerRequestForm(user=USER),
         }
 
     return render(request, "mySolar/beSeller.html", context)
@@ -163,3 +168,12 @@ def help(request):
         }
 
     return render(request, "mySolar/help.html", context)
+
+@login_required
+def requestsAndQuestions(request):
+    if request.user.is_staff == False or request.user.is_superuser == False:
+        return render(request, "mySolar/fail.html", {'message':"You are not permitted here."})
+    else:
+        requests = sellerRequests.objects.all()
+        QUESTIONS = userQuestions.objects.all()
+        return render(request, "mySolar/requestsAndQuestions.html", {"requests": requests, "questions": QUESTIONS})

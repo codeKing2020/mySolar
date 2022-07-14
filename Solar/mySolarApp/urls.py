@@ -13,5 +13,6 @@ urlpatterns = [
     path("product", product, name="product"),
     path("help", help, name="help"),
     path("beSeller", beSeller, name="beSeller"),
-    path("success", success, name="success")
+    path("success", success, name="success"),
+    path("requestsAndQuestions", requestsAndQuestions, name="requests")
 ]

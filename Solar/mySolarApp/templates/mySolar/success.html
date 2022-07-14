@@ -10,7 +10,10 @@ Thank you for registering to become a seller | mySolar
         <p class="fs-3">Thank you {{ request.user.get_username.capitalize }} for registering to become a seller, your request and shop location will be verified and you will be emailed within 5 days.</p>
     {% elif success == "pendingHelp" %}
         <h1>Thank you for asking</h1>
-        <p>This helps us imporve our website and user experience, check back in less than 24 hours to see if your question was answered</p>
+        <p>This helps us improve our website and user experience, check back in less than 24 hours to see if your question was answered</p>
+    {% elif success == "alreadyApplied" %}
+        <h1>You have already applied before</h1>
+        <p>You have already applied to become a seller, please be a little more patient, if you feel we are taking too long or have any inquiries, please email us at mysolar@gmail.com</p>
     {% else %}
         <h1 class="text-center">Nothing to see here!</h1>
     {% endif %}
