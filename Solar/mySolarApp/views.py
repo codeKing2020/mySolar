@@ -9,8 +9,11 @@ from django.db import IntegrityError
 from django.shortcuts import redirect
 
 # Create your views here.
+
+
 def index(request):
     return render(request, "mySolar/index.html")
+
 
 def sign_in(request):
     # get the next info from the POST area (forms)
@@ -42,13 +45,15 @@ def sign_in(request):
                 return render(request, "mySolar/login.html", {
                     "message": "Invalid username and/or password."
                 })
-        # this was a GET request    
+        # this was a GET request
         else:
             return render(request, "mySolar/login.html")
+
 
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
 
 def register(request):
     # if we received a POST method request
@@ -74,7 +79,7 @@ def register(request):
             return render(request, "mySolar/register.html", {
                 "message": "Username already exists"
             })
-        
+
         # Ensure unique email
         if User.objects.filter(email=email).exists():
             return render(request, "mySolar/register.html", {
@@ -104,52 +109,76 @@ def register(request):
     else:
         return render(request, "mySolar/register.html")
 
+
 def about(request):
     return render(request, "mySolar/about.html")
+
 
 def contact(request):
     return render(request, "mySolar/contact.html")
 
+
 def shop(request):
     return render(request, "mySolar/store.html")
 
+
 def product(request):
     return render(request, "mySolar/product.html")
-    
+
+
 @login_required
 def success(request):
     return render(request, "mySolar/success.html")
 
+
 @login_required
 def beSeller(request):
+    # Get User
     USER = request.user
-    if request.method == 'POST':
-        a = User.objects.get(username=USER.get_username())
-        if a.beSellerFormSubmitted == False:
-            user_form = SellerRequestForm(request.POST)
-
-            if user_form.is_valid():
-                user_form.instance.sellerAcc = USER
-                user_form.save()
-                a.update(beSellerFormSubmitted=True)
-                return render(request, 'mySolar/success.html', {"success":"pendingSellerConfirmation"})        
-                
-            else:
-                context = {
-                    'user_form': user_form,
-                }
-
-        else:
-            context = {
-                "success":"alreadyApplied",
-                }
-
-    else:
+    # Get user in databse by their username
+    a = User.objects.get(username=USER.get_username())
+    # if the user already submitted the form before
+    if a.beSellerFormSubmitted:
+        # create context dict
         context = {
-            'user_form': SellerRequestForm(user=USER),
+            "success": "alreadyApplied",
+        }
+        # redirect to success page
+        return render(request, "mySolar/success.html", context)
+
+    # else user hasn't submitted before
+    # if user submitted
+    elif request.method == 'POST':
+        # process form
+        user_form = SellerRequestForm(request.POST)
+        # if form is valid
+        if user_form.is_valid():
+            # add user info in the instance
+            user_form.instance.sellerAcc = USER
+            # save the info
+            user_form.save()
+            # set user submitForm to true
+            a.beSellerFormSubmitted=True
+            a.save()
+            # redirect to success page
+            return render(request, 'mySolar/success.html', {"success": "pendingSellerConfirmation"})
+
+        # else form isn't valid
+        else:
+            # create context dict which stores errors and other stuff
+            context = {
+                'user_form': user_form,
+            }
+    # else user hasn't submitted form before and also isn't right now
+    else:
+        # create context with the form
+        context = {
+            'user_form': SellerRequestForm(),
         }
 
+    # go to original page
     return render(request, "mySolar/beSeller.html", context)
+
 
 def help(request):
     if request.method == "POST":
@@ -169,10 +198,11 @@ def help(request):
 
     return render(request, "mySolar/help.html", context)
 
+
 @login_required
 def requestsAndQuestions(request):
     if request.user.is_staff == False or request.user.is_superuser == False:
-        return render(request, "mySolar/fail.html", {'message':"You are not permitted here."})
+        return render(request, "mySolar/fail.html", {'message': "You are not permitted here."})
     else:
         requests = sellerRequests.objects.all()
         QUESTIONS = userQuestions.objects.all()
