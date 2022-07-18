@@ -7,19 +7,19 @@ Become a seller, earn money while you sleep! | mySolar
 {% endblock %}
 
 {% block body %}
-    {% if request.user.is_shopkeeper == False %}
-        <h1 style="color: rgb(0, 190, 0)">Become a seller</h1>
-        <p class="fs-2">Earn money while you sleep!</p>
-        <p>Just please fill out the form below, your shop will be verified and you will be emailed within 5 days</p>
+{% if request.user.is_shopkeeper == False %}
+<h1 style="color: rgb(0, 190, 0)">Become a seller</h1>
+<p class="fs-2">Earn money while you sleep!</p>
+<p>Just please fill out the form below, your shop will be verified and you will be emailed within 5 days</p>
 
-        <form action="{% url 'beSeller' %}" method="POST">
-            {% csrf_token %}
-            {{ user_form.as_p }}
-            {{ profile_form.as_p }}
-            <input type="submit" value="register">
-        </form>
-    {% else %}
-        <h1>You are already a seller!</h1>
-        <p>What are you doing here? Go sell and take advantage of the internet to prosper!</p>
-    {% endif %}
+<form action="{% url 'beSeller' %}" method="POST">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <input type="submit" value="register">
+</form>
+{% else %}
+<h1>You are already a seller!</h1>
+<p>What are you doing here? Go sell and take advantage of the internet to prosper!</p>
+{% endif %}
 {% endblock %}

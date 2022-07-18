@@ -5,8 +5,11 @@ requests and questions
 {% endblock %}
 
 {% block body %}
-<button class="btn btn-outline-primary d-block mx-auto text-center">requests</button>
-<button class="btn btn-outline-primary d-block mx-auto text-center">questions</button>
+<div>
+    <button class="btn btn-outline-primary d-block mx-auto text-center d-inline">requests</button>
+    <button class="btn btn-outline-primary d-block mx-auto text-center d-inline">questions</button>
+</div>
+
 <div class="requests">
     <table class="table table-hover table-dark">
         <thead>
@@ -20,7 +23,7 @@ requests and questions
             </tr>
         </thead>
         <tbody>
-        {% for seller in requests %}
+            {% for seller in requests %}
             <tr>
                 <th scope="row">{{ seller.pk }}</th>
                 <td>{{seller.sellerFName}}</td>
@@ -29,7 +32,7 @@ requests and questions
                 <td>{{seller.businessEmail}}</td>
                 <td>{{seller.location}}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -43,17 +46,17 @@ requests and questions
             </tr>
         </thead>
         <tbody>
-        {% for question in questions %}
+            {% for question in questions %}
             <tr>
                 <th scope="row">{{ question.pk }}</th>
                 <td>{{question.question}}</td>
                 {% if question.email == '' %}
-                    <td>NULL</td>
+                <td>NULL</td>
                 {% else %}
-                    <td>{{question.email}}</td>
+                <td>{{question.email}}</td>
                 {% endif %}
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 </div>

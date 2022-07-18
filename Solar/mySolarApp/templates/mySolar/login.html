@@ -8,14 +8,14 @@
         <h2>Login</h2>
 
         {% if message %}
-            <div class="fs-4 pt-2 text-light text-center bg-danger border">
-                <p>{{ message }}</p>
-            </div>
+        <div class="fs-4 pt-2 text-light text-center bg-danger border">
+            <p>{{ message }}</p>
+        </div>
         {% endif %}
-<!-- http://127.0.0.1:8000/login?next=/beSeller -->
+        <!-- http://127.0.0.1:8000/login?next=/beSeller -->
         <form action="{% url 'login' %}" method="post">
             {% if request.GET.next %}
-                <input type="hidden" name="next" value="{{ request.GET.next }}" />
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
             {% endif %}
             {% csrf_token %}
             <div class="form-group">

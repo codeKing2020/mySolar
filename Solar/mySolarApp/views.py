@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import HttpResponseRedirect, render
+from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -119,10 +119,16 @@ def contact(request):
 
 
 def shop(request):
-    return render(request, "mySolar/store.html")
+    f = Product.objects.all()
+    if f is not None:
+        context = {"products":Product.objects.all()}
+    else: 
+        context = {"products": "None"}
+    return render(request, "mySolar/store.html", context)
 
 
-def product(request):
+def product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
     return render(request, "mySolar/product.html")
 
 

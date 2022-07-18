@@ -8,17 +8,25 @@ Store | mySolar
 
 {% block body %}
 <h1>Store</h1>
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 mb-3 ">
-  <div class="col gap-4">
-    <div class="card h-100">
-      <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Respect</h5>
-        <p class="card-text">This is a post I respect so much</p>
-        <button class="btn btn-outline-primary card-link">Respect</button>
-        <button class="btn btn-outline-secondary card-link">It's ok</button>
-      </div>
-    </div>
-  </div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mb-3 ">
+      <!-- START FOR LOOP HERE -->
+      {% for product in products %}
+        <div class="col mb-4">
+          <a href="{% url 'product' product.pk %}">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ product.price }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">Sold by <a href="#"><b>{{ product.seller.name }}</b></a></h6>
+                <p class="card-text">{{ price.short_desc }}</p>
+                <a href="#" class="btn btn-outline-success card-link">Respect</a>
+                <a href="#" class="btn btn-outline-warning text-dark card-link">It's ok</a>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
 </div>
 {% endblock %}
