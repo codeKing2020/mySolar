@@ -8,7 +8,12 @@ Store | mySolar
 
 {% block body %}
 <h1>Store</h1>
-
+<form action="categoryProducts" method="POST">
+  {% csrf_token %}
+  {{categoryForm}}
+  <button type="submit">Search</button>
+</form>
+<br>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mb-3 ">
       <!-- START FOR LOOP HERE -->
       {% for product in products %}
@@ -19,7 +24,7 @@ Store | mySolar
               <div class="card-body">
                 <h5 class="card-title">{{ product.title }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ product.price }}</h6>
-                <h6 class="card-subtitle mb-2 text-muted">Sold by <a href="#"><b>{{ product.seller.name }}</b></a></h6>
+                <h6 class="card-subtitle mb-2 text-muted">Sold by <a href="{% url 'sellerInfo' product.seller.pk %}"><b>{{ product.seller.name }}</b></a></h6>
                 <p class="card-text">{{ price.short_desc }}</p>
                 <a href="#" class="btn btn-outline-success card-link">Respect</a>
                 <a href="#" class="btn btn-outline-warning text-dark card-link">It's ok</a>

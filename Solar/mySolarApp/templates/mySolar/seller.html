@@ -1,0 +1,18 @@
+{% extends 'mySolar/layout.html' %}
+
+{% block title %}
+More info about {{seller.name}}
+{% endblock %}
+
+{% block body %}
+<h2>About seller</h2>
+<p>Name: {{seller.name}}</p>
+<p>Joined on: <b>{{seller.shopkeeper.date_joined}}</b></p>
+<p>Bio:</p>
+<br>
+<p>{{ seller.bio }}</p>
+<hr>
+<p>Located at: {{seller.location}}</p>
+
+<h2><a href="{% url 'sellerProducts' seller.pk %}">View {{seller.name}}'s products</a></h2>
+{% endblock %}

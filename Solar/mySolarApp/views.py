@@ -120,8 +120,12 @@ def contact(request):
 
 def shop(request):
     f = Product.objects.all()
+    categoryForm = categoryProductsForm()
     if f is not None:
-        context = {"products":Product.objects.all()}
+        context = {
+            "products":f,
+            "categoryForm": categoryForm
+        }
     else: 
         context = {"products": "None"}
     return render(request, "mySolar/store.html", context)
@@ -129,8 +133,25 @@ def shop(request):
 
 def product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    return render(request, "mySolar/product.html")
+    context = {
+        "product": product
+    }
+    return render(request, "mySolar/product.html", context)
 
+def sellerInfo(request, seller_id):
+    seller = get_object_or_404(Profile, pk=seller_id)
+    context = {
+        "seller": seller,
+    }
+    return render(request, "mySolar/seller.html", context)
+
+def sellerProducts(request, seller_id):
+    seller = Profile.objects.get(pk=seller_id)
+    sellerProducts = Product.objects.filter(seller=seller)
+    context = {
+        "products": sellerProducts
+    }
+    return render(request, "mySolar/store.html", context)
 
 @login_required
 def success(request):
@@ -141,7 +162,7 @@ def success(request):
 def beSeller(request):
     # Get User
     USER = request.user
-    # Get user in databse by their username
+    # Get user in database by their username
     a = User.objects.get(username=USER.get_username())
     # if the user already submitted the form before
     if a.beSellerFormSubmitted:
@@ -213,3 +234,29 @@ def requestsAndQuestions(request):
         requests = sellerRequests.objects.all()
         QUESTIONS = userQuestions.objects.all()
         return render(request, "mySolar/requestsAndQuestions.html", {"requests": requests, "questions": QUESTIONS})
+
+def categoryProducts(request):
+    if request.method == 'POST':
+        # process form
+        user_form = categoryProductsForm(request.POST)
+        # if form is valid
+        if user_form.is_valid():
+            # get products in that category
+            user_data = user_form.cleaned_data.get("category")
+            products = Product.objects.filter(category=user_data)
+            user_form = categoryProductsForm(request.POST)
+            context = {
+                "categoryForm": user_form,
+                "products": products
+            }
+            # redirect with those products
+            return render(request, 'mySolar/store.html', context)
+
+        # else form isn't valid
+        else:
+            # create context dict which stores errors and other stuff
+            context = {
+                'user_form': user_form,
+            }
+
+            return render(request, 'mySolar/store.html', context)

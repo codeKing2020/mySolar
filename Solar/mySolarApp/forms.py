@@ -58,3 +58,8 @@ class askQuestionForm(forms.ModelForm):
             "email": forms.TextInput(attrs={'placeholder': 'We will email you our response ASAP.'}),
             "question": forms.Textarea(attrs={'placeholder': 'Ask anything!'})
         }
+
+class categoryProductsForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = {"category"}
