@@ -22,7 +22,7 @@ def sign_in(request):
     if request.user.is_authenticated:
         if next_page is not None:
             return HttpResponseRedirect(next_page)
-        return HttpResponseRedirect("index")
+        return render(request, "mySolar/index.html")
     else:
         if request.method == "POST":
             # Attempt to sign user in
@@ -121,12 +121,12 @@ def contact(request):
 def shop(request):
     f = Product.objects.all()
     categoryForm = categoryProductsForm()
-    if f is not None:
+    if len(f) != 0:
         context = {
-            "products":f,
+            "products": f,
             "categoryForm": categoryForm
         }
-    else: 
+    else:
         context = {"products": "None"}
     return render(request, "mySolar/store.html", context)
 
@@ -138,12 +138,14 @@ def product(request, product_id):
     }
     return render(request, "mySolar/product.html", context)
 
+
 def sellerInfo(request, seller_id):
     seller = get_object_or_404(Profile, pk=seller_id)
     context = {
         "seller": seller,
     }
     return render(request, "mySolar/seller.html", context)
+
 
 def sellerProducts(request, seller_id):
     seller = Profile.objects.get(pk=seller_id)
@@ -152,6 +154,7 @@ def sellerProducts(request, seller_id):
         "products": sellerProducts
     }
     return render(request, "mySolar/store.html", context)
+
 
 @login_required
 def success(request):
@@ -185,7 +188,7 @@ def beSeller(request):
             # save the info
             user_form.save()
             # set user submitForm to true
-            a.beSellerFormSubmitted=True
+            a.beSellerFormSubmitted = True
             a.save()
             # redirect to success page
             return render(request, 'mySolar/success.html', {"success": "pendingSellerConfirmation"})
@@ -235,6 +238,7 @@ def requestsAndQuestions(request):
         QUESTIONS = userQuestions.objects.all()
         return render(request, "mySolar/requestsAndQuestions.html", {"requests": requests, "questions": QUESTIONS})
 
+
 def categoryProducts(request):
     if request.method == 'POST':
         # process form
@@ -260,3 +264,43 @@ def categoryProducts(request):
             }
 
             return render(request, 'mySolar/store.html', context)
+
+
+@login_required
+def sellerDash(request):
+    if request.user.is_shopkeeper:
+        # return info about the user/shopkeeper
+        # return info about deliveries concerning the user themselves
+        user = request.user.id
+        profile = Profile.objects.get(shopkeeper=user)
+        delivery_items = delivery_info.objects.filter(seller=profile)
+        if len(delivery_items) != 0:
+            context = {
+                "user": User.objects.get(username=request.user.username),
+                "delivery_info": delivery_items
+            }
+        else:
+            context = {
+                "user": User.objects.get(username=request.user.username),
+                "delivery_info": "empty"
+            }
+        return render(request, "mySolar/sellerDash.html", context)
+    return render(request, "mySolar/fail.html", {"message": "You are not authorized to enter this page."})
+
+
+@login_required
+def createProduct(request):
+    if request.user.is_shopkeeper or request.user.is_staff:
+        if request.method == "POST":
+            user_form = createProductForm(request.POST)
+            # if form is valid
+            if user_form.is_valid():
+                # take info and save
+                user_form.save()
+                # redirect to dashboard
+                redirect("sellerDash")
+        else:
+            user_form = createProductForm(request.POST)
+            return render(request, "mySolar/sellerDash.html", {"user_form": user_form})
+    else:
+        return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})

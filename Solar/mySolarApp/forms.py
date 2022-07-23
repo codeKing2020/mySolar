@@ -33,11 +33,11 @@ class SellerRequestForm(forms.ModelForm):
         }
 
 
-class ProductForm(forms.ModelForm):
+class createProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        exclude = ("user", "is_closed", "in_stock", "seller")
+        exclude = ("is_closed", "in_stock", "seller")
 
 
 class delivery_infoForm(forms.ModelForm):
@@ -58,6 +58,7 @@ class askQuestionForm(forms.ModelForm):
             "email": forms.TextInput(attrs={'placeholder': 'We will email you our response ASAP.'}),
             "question": forms.Textarea(attrs={'placeholder': 'Ask anything!'})
         }
+
 
 class categoryProductsForm(forms.ModelForm):
     class Meta:

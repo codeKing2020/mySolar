@@ -16,6 +16,9 @@ urlpatterns = [
     path("success", success, name="success"),
     path("requestsAndQuestions", requestsAndQuestions, name="requests"),
     path("sellerInfo<int:seller_id>", sellerInfo, name="sellerInfo"),
-    path("sellerProducts<int:seller_id>", sellerProducts, name="sellerProducts"),
-    path("categoryProducts", categoryProducts, name="categoryProducts")
+    path("sellerProducts<int:seller_id>",
+         sellerProducts, name="sellerProducts"),
+    path("categoryProducts", categoryProducts, name="categoryProducts"),
+    path("sellerDash", sellerDash, name="sellerDash"),
+    path('createProduct', createProduct, name="createProduct"),
 ]

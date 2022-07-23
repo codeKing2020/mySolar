@@ -3,10 +3,11 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
+
 class User(AbstractUser):
     """
     User Model
-    
+
     Stores info about EVERY user, including the shopkeepers and the admin
     Valuable fields in here:
         username
@@ -27,6 +28,8 @@ class User(AbstractUser):
         return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'
 
 # "contact_info", "location", "how_active", "ID"
+
+
 class Profile(models.Model):
     """
     Profile model
@@ -43,11 +46,14 @@ class Profile(models.Model):
     shopkeeper = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
-    profile_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
-    banner_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+    profile_pic = models.ImageField(
+        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+    banner_pic = models.ImageField(
+        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
     identification = models.CharField(max_length=13)
+
 
 class Product(models.Model):
     """
@@ -61,15 +67,14 @@ class Product(models.Model):
     has fields to check if it is still in stock or is closed (in the case that someone tries to access it and they try to buy an item thats closed)
     """
     # Categories - choices
-    SLP = "SLP" # solar panels
-    BAT = "BAT" # batteries
-    INV = "INV" # inverters
-    CHA_CTRL = "CHA_CTRL" # charge controllers 
-    WAT_PUMPS = "WAT_PUMPS" # water pumps
-    ACC = "ACC" # accessories
-    TOOLS = "TOOLS" # tools
-    MISC = "MISC" # miscellaneous 
-    
+    SLP = "SLP"  # solar panels
+    BAT = "BAT"  # batteries
+    INV = "INV"  # inverters
+    CHA_CTRL = "CHA_CTRL"  # charge controllers
+    WAT_PUMPS = "WAT_PUMPS"  # water pumps
+    ACC = "ACC"  # accessories
+    TOOLS = "TOOLS"  # tools
+    MISC = "MISC"  # miscellaneous
 
     CATEGORY = [
         (SLP, "Solar Panels"),
@@ -82,18 +87,21 @@ class Product(models.Model):
         (MISC, "Miscellaneous/Other"),
     ]
 
-    seller = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="product_seller")
+    seller = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="product_seller")
     title = models.CharField(max_length=64)
-    pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='product_images')
+    pic = models.ImageField(blank=True, height_field=None,
+                            width_field=None, upload_to='product_images')
     short_desc = models.CharField("Short Description", max_length=150)
     long_desc = models.CharField("Long Description", max_length=5000)
     category = models.CharField(max_length=10, choices=CATEGORY, default=MISC)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    in_stock = models.BooleanField(default=True) 
+    in_stock = models.BooleanField(default=True)
     is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'
+
 
 class delivery_info(models.Model):
     """
@@ -117,14 +125,20 @@ class delivery_info(models.Model):
         (ONPOINT, "On point"),
         (ONLINE, "Online")
     ]
-
-    item = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_deliveryInfo")
+    seller = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="seller_deliveryInfo")
+    item = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_deliveryInfo")
     amount_of_item = models.IntegerField(null=False, default=1)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer_deliveryInfo")
-    delivery_date = models.DateTimeField(verbose_name=("Delivery Date"), auto_now_add=False, null=False, blank=False)
+    customer = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="customer_deliveryInfo")
+    delivery_date = models.DateTimeField(verbose_name=(
+        "Delivery Date"), auto_now_add=False, null=False, blank=False)
     location = models.CharField(max_length=128)
     processed = models.BooleanField(default=False)
-    payment_method = models.CharField(max_length=10, choices=PAYMENT, default=ONPOINT)
+    delivered = models.BooleanField(default=False)
+    payment_method = models.CharField(
+        max_length=10, choices=PAYMENT, default=ONPOINT)
 
 
 class sellerRequests(models.Model):
@@ -142,10 +156,12 @@ class sellerRequests(models.Model):
     name = models.CharField(max_length=64, unique=True, blank=False)
     location = models.CharField(max_length=128, blank=False)
     bio = models.CharField(max_length=1000, blank=False)
-    profile_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
-    banner_pic = models.ImageField(blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
-    how_active = models.IntegerField()
+    profile_pic = models.ImageField(
+        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
+    banner_pic = models.ImageField(
+        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
     identification = models.CharField(max_length=13, unique=True, blank=False)
+
 
 class userQuestions(models.Model):
     """
