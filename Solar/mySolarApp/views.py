@@ -304,3 +304,10 @@ def createProduct(request):
             return render(request, "mySolar/sellerDash.html", {"user_form": user_form})
     else:
         return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
+
+
+def orderInfo(request, deliveryPK):
+    # search up delivery info
+    # send to page with info
+    info = delivery_info.objects.get(pk=deliveryPK)
+    return render(request, "mySolar/orderInfo.html", {"info": info})

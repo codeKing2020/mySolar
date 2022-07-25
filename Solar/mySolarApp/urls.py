@@ -21,4 +21,5 @@ urlpatterns = [
     path("categoryProducts", categoryProducts, name="categoryProducts"),
     path("sellerDash", sellerDash, name="sellerDash"),
     path('createProduct', createProduct, name="createProduct"),
+    path("orderInfo<int:deliveryPK>", orderInfo, name="orderInfo")
 ]

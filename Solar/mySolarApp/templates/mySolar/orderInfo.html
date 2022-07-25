@@ -1,0 +1,40 @@
+{% extends 'mySolar/dashLayout.html' %}
+{% load static %}
+{% block title %}
+About {{info.customer.username}'s order
+{% endblock %}
+
+{% block body %}
+<div class="row row-cols-2">
+    <div class="col">
+        <a href="{% url 'product' info.item.pk %}">
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ info.item.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ info.item.price }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Sold by <a
+                            href="{% url 'sellerInfo' info.item.seller.pk %}"><b>{{ info.item.seller.name }}</b></a>
+                    </h6>
+                    <p class="card-text">{{ info.item.short_desc }}</p>
+                    <a href="#" class="btn btn-outline-success card-link">Respect</a>
+                    <a href="#" class="btn btn-outline-warning text-dark card-link">It's ok</a>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <p><b>Customer: </b>{{info.customer.username}}</p>
+        <p><b>Item amount: </b>{{info.amount_of_item}}</p>
+        <p><b>Location: </b>{{info.location}}</p>
+        <p><b>Payment method: </b> {{info.payment_method}}</p>
+        <p><b>Email of customer:</b> {{info.customer.email}}</p>
+        <br>
+        <p><b>Order in process:</b> {{ info.processed }}</p>
+        <button class="btn btn-primary">Begin Processing</button>
+        <p>Order is delivered: {{info.delivered}}</p>
+        <button class="btn btn-primary">Mark as delivered</button>
+    </div>
+</div>
+
+{% endblock %}
