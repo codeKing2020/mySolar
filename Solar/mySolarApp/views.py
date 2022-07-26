@@ -306,8 +306,34 @@ def createProduct(request):
         return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
 
 
-def orderInfo(request, deliveryPK):
-    # search up delivery info
-    # send to page with info
-    info = delivery_info.objects.get(pk=deliveryPK)
-    return render(request, "mySolar/orderInfo.html", {"info": info})
+def orderInfo(request, deliveryPK, action):
+    if action == "view":
+        # search up delivery info
+        # send to page with info
+        info = delivery_info.objects.get(pk=deliveryPK)
+        return render(request, "mySolar/orderInfo.html", {"info": info})
+    elif action == "process":
+        # search up delivery info
+        # alt info
+        # send to page with info
+        info = delivery_info.objects.get(pk=deliveryPK)
+        info.processed = True
+        info.save()
+        return render(request, "mySolar/orderInfo.html", {"info": info})
+    elif action == "delivered":
+        # search up delivery info
+        # alt info
+        # send to page with info
+        orderInfo(request, deliveryPK, "process")
+        info = delivery_info.objects.get(pk=deliveryPK)
+        info.delivered = True
+        info.save()
+        return render(request, "mySolar/orderInfo.html", {"info": info})
+    elif action == "delete":
+        # search up delivery info
+        # send to page with info
+        info = delivery_info.objects.get(pk=deliveryPK)
+        info.close_delivery
+        return sellerDash(request)
+    else:
+        return render(request, "mySolar/fail.html", {'message': "We don't know why you're here. <br> Seeing this page by mistake? Contact us! Go to the help page and submit a query."})

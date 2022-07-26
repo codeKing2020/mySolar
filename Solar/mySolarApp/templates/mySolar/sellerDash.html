@@ -9,59 +9,70 @@ Seller Dashboard | mySolar
     <!-- Show overall info, eg orders -->
     <h1 class="mb-3">Hello {{ user.username }}</h1>
 
-    <h2 class="mb-5 border-bottom">Your orders</h2>
+    <h2 class="mb-5">Your orders</h2>
     {% if delivery_info == "empty" %}
     <h3>You currently do not have any orders, check again soon!</h3>
     {% else %}
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Item</th>
-                <th scope="col">#</th>
-                <th scope="col">Delivery Date</th>
-                <th scope="col">Location</th>
-                <th scope="col">Payment Method</th>
-                <th scope="col">Customer contact info</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for del_info in delivery_info %}
-            <tr>
-                <td>
-                    {{del_info.item.title}}
-                </td>
-                <td>
-                    {{del_info.amount_of_item}}
-                </td>
-                <td>
-                    {{del_info.delivery_date}}
-                </td>
-                <td>
-                    {{del_info.location}}
-                </td>
-                <td>
-                    {{del_info.payment_method}}
-                </td>
-                {% if del_info.customer.contact_info %}
-                <td>
-                    {{del_info.customer.contact_info}
-                </td>
-                {% else %}
-                <td>
-                    {{del_info.customer.email}}
-                </td>
-                <td>
-                    <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk %}">View</a>
-                    <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk %}">Process</a>
-                    <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk %}">Delivered</a>
-                    <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk %}">Delete</a>
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="overflow-visible">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Delivery Date</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Customer contact info</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for del_info in delivery_info %}
+                {% if del_info.delivered == False %}
+                <tr class="table-active">
+                    {% elif del_info.delivered == True %}
+                <tr class="table-success">
+                    {% elif del_info.processed == True %}
+                <tr class="table-info">
+                    {% endif %}
+                    <td>
+                        {{del_info.item.title}}
+                    </td>
+                    <td>
+                        {{del_info.amount_of_item}}
+                    </td>
+                    <td>
+                        {{del_info.delivery_date}}
+                    </td>
+                    <td>
+                        {{del_info.location}}
+                    </td>
+                    <td>
+                        {{del_info.payment_method}}
+                    </td>
+                    {% if del_info.customer.contact_info %}
+                    <td>
+                        {{del_info.customer.contact_info}
+                    </td>
+                    {% else %}
+                    <td>
+                        {{del_info.customer.email}}
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'view' %}">View</a>
+                        <a class="btn btn-outline-primary"
+                            href="{% url 'orderInfo' del_info.pk 'process' %}">Process</a>
+                        <a class="btn btn-outline-primary"
+                            href="{% url 'orderInfo' del_info.pk 'delivered' %}">Delivered</a>
+                        <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'nothing' %}">Delete</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     {% endif %}
 </div>
 {% endblock %}

@@ -26,7 +26,7 @@
     </title>
 </head>
 
-<body>
+<body class="overflow-scroll">
 
     <div class="d-flex flex-row 100w">
         {% if request.user.is_shopkeeper == True %}
@@ -39,8 +39,8 @@
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="border-top my-3"></li>
                 <li>
-                    <a href="#" class="nav-link text-white">
-                        Orders
+                    <a href="{% url 'sellerDash' %}" class="nav-link text-white">
+                        Dashboard
                     </a>
                 </li>
                 <li>

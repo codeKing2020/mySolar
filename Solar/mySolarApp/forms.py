@@ -43,7 +43,7 @@ class createProductForm(forms.ModelForm):
 class delivery_infoForm(forms.ModelForm):
     class Meta:
         model = delivery_info
-        exclude = ("processed", "item", "customer")
+        exclude = ("processed", "item", "customer", "closed")
 
 
 class askQuestionForm(forms.ModelForm):

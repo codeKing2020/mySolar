@@ -16,6 +16,7 @@ class User(AbstractUser):
         email
         password
         beSellerFormSubmitted
+        is_active
 
         useful information regarding this model can be found at https://docs.djangoproject.com/en/4.0/ref/contrib/auth/#django.contrib.auth.models.User
         including info about getting full name or changing password etc
@@ -31,6 +32,9 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
+    def deactivate_shopkeeper(self):
+        self.is_active = False
+        self.save()
     """
     Profile model
 
@@ -43,7 +47,8 @@ class Profile(models.Model):
         how active they'll be per week (could be useful later for search optimisation)
         identification number of shop owner for authenticity
     """
-    shopkeeper = models.ForeignKey(User, on_delete=models.CASCADE)
+    shopkeeper = models.ForeignKey(
+        User, on_delete=models.SET(deactivate_shopkeeper))
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
     profile_pic = models.ImageField(
@@ -53,9 +58,13 @@ class Profile(models.Model):
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
     identification = models.CharField(max_length=13)
+    is_active = models.BooleanField(default=True)
 
 
 class Product(models.Model):
+    def close_product(self):
+        self.is_closed = True
+        self.save()
     """
     Product model
 
@@ -88,7 +97,7 @@ class Product(models.Model):
     ]
 
     seller = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, related_name="product_seller")
+        Profile, on_delete=models.SET(close_product), related_name="product_seller")
     title = models.CharField(max_length=64)
     pic = models.ImageField(blank=True, height_field=None,
                             width_field=None, upload_to='product_images')
@@ -104,6 +113,10 @@ class Product(models.Model):
 
 
 class delivery_info(models.Model):
+    def close_delivery(self):
+        self.closed = True
+        self.save()
+
     """
     delivery_info model
 
@@ -126,12 +139,12 @@ class delivery_info(models.Model):
         (ONLINE, "Online")
     ]
     seller = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, related_name="seller_deliveryInfo")
+        Profile, on_delete=models.SET(close_delivery), related_name="seller_deliveryInfo")
     item = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="product_deliveryInfo")
+        Product, on_delete=models.SET(close_delivery), related_name="product_deliveryInfo")
     amount_of_item = models.IntegerField(null=False, default=1)
     customer = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="customer_deliveryInfo")
+        User, on_delete=models.SET(close_delivery), related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField(verbose_name=(
         "Delivery Date"), auto_now_add=False, null=False, blank=False)
     location = models.CharField(max_length=128)
@@ -139,6 +152,7 @@ class delivery_info(models.Model):
     delivered = models.BooleanField(default=False)
     payment_method = models.CharField(
         max_length=10, choices=PAYMENT, default=ONPOINT)
+    closed = models.BooleanField(default=False)
 
 
 class sellerRequests(models.Model):
