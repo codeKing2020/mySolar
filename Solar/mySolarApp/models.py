@@ -48,7 +48,7 @@ class Profile(models.Model):
         identification number of shop owner for authenticity
     """
     shopkeeper = models.ForeignKey(
-        User, on_delete=models.SET(deactivate_shopkeeper))
+        User, on_delete=models.SET(deactivate_shopkeeper), related_name="user_profile")
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
     profile_pic = models.ImageField(

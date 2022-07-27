@@ -1,18 +1,30 @@
-{% extends 'mySolar/layout.html' %}
-
-{% block title %}
-More info about {{seller.name}}
-{% endblock %}
-
-{% block body %}
+{% extends 'mySolar/layout.html' %} {% block title %} More info about
+{{seller.name}} {% endblock %} {% block body %}
+<!-- -->{% if seller.is_active and seller.shopkeeper.is_active%}
 <h2>About seller</h2>
 <p>Name: {{seller.name}}</p>
 <p>Joined on: <b>{{seller.shopkeeper.date_joined}}</b></p>
 <p>Bio:</p>
-<br>
+<br />
 <p>{{ seller.bio }}</p>
-<hr>
+<hr />
 <p>Located at: {{seller.location}}</p>
 
-<h2><a href="{% url 'sellerProducts' seller.pk %}">View {{seller.name}}'s products</a></h2>
-{% endblock %}
+<h2>
+  <a href="{% url 'sellerProducts' seller.pk %}"
+    >View {{seller.name}}'s products</a
+  >
+</h2>
+{% else %}
+<div class="container text-center m-3">
+  <h2 class="text-break">
+    This user does not exist or has deleted their account.
+  </h2>
+  <p class="text-break">
+    Is this your account and you feel you are not supposed to be facing this
+    error? <a href="{% url 'help' %}" class="text-info">Contact us!</a> We're
+    more than happy to help at any time.
+  </p>
+</div>
+
+{% endif %} {% endblock %}

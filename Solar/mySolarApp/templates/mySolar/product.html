@@ -1,26 +1,63 @@
-{% extends 'mySolar/layout.html' %}
-
-{% load static %}
-
-{% block title %}
-More Info
-{% endblock %}
-
-{% block body %}
-<h1>More Info on ____</h1>
-<div class="d-md-flex flex-md-row justify-content-md-around align-items-center">
-    <section class="img-section float-md-start">
-        <img src="{% static 'respect1000.jpg' %}" class="img-fluid flex-fill" alt="...">
-    </section>
-    <div class="productDivider"></div>
-    <section class="info-section float-md-end">
-        <h2>Yo!</h2>
-        <p>Here's some info about this product!</p>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illum nostrum id atque tempore aliquam pariatur
-            excepturi placeat. Eligendi, ea aut fuga non omnis, quo ut atque quis voluptatem numquam doloremque.</p>
-        <p>Sold by <b>this_person</b></p>
-        <button class="btn btn-outline-success">Buy</button>
-        <button class="btn btn-outline-primary">Add to cart</button>
-    </section>
+{% extends 'mySolar/layout.html' %} {% load static %} {% block title %} More
+Info {% endblock %} {% block body %} {% if product.is_closed %}
+<div class="container-fluid">
+  <h1 class="text-center text-danger semibold">
+    This product can not be purchased anymore.
+  </h1>
+  <p class="text-info text-break mb-0 pb-0">
+    This may be because the seller closed the item or it out of stock.
+  </p>
+  <p class="text-info">
+    Check with the seller or
+    <a class="text-warning" href="{% url 'help' %}">contact us</a> if you feel
+    there has been an error.
+  </p>
 </div>
-{% endblock %}
+<div
+  class="d-md-flex flex-md-row justify-content-md-around align-items-center mt-2"
+>
+  <section class="img-section float-md-start">
+    <img
+      src="{% static 'respect1000.jpg' %}"
+      class="img-fluid flex-fill"
+      alt="..."
+    />
+  </section>
+  <div class="productDivider"></div>
+  <section class="info-section float-md-end">
+    <h2>{{product.title}}</h2>
+    <p>
+      sold by
+      <a href="{% url 'sellerInfo' product.seller.pk %}"
+        >{{product.seller.name}}</a
+      >
+    </p>
+    <p>{{product.long_desc}}</p>
+  </section>
+</div>
+{% else %}
+<div
+  class="d-md-flex flex-md-row justify-content-md-around align-items-center mt-2"
+>
+  <section class="img-section float-md-start">
+    <img
+      src="{% static 'respect1000.jpg' %}"
+      class="img-fluid flex-fill"
+      alt="..."
+    />
+  </section>
+  <div class="productDivider"></div>
+  <section class="info-section float-md-end">
+    <h2>{{product.title}}</h2>
+    <p>
+      sold by
+      <a href="{% url 'sellerInfo' product.seller.pk %}"
+        >{{product.seller.name}}</a
+      >
+    </p>
+    <p>{{product.long_desc}}</p>
+    <button class="btn btn-outline-success">Buy</button>
+    <button class="btn btn-outline-primary">Add to cart</button>
+  </section>
+</div>
+{% endif %} {% endblock %}

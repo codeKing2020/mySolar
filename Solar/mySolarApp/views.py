@@ -132,7 +132,7 @@ def shop(request):
 
 
 def product(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
+    product = Product.objects.get(pk=product_id)
     context = {
         "product": product
     }
@@ -140,7 +140,7 @@ def product(request, product_id):
 
 
 def sellerInfo(request, seller_id):
-    seller = get_object_or_404(Profile, pk=seller_id)
+    seller = Profile.objects.get(pk=seller_id)
     context = {
         "seller": seller,
     }
@@ -148,8 +148,16 @@ def sellerInfo(request, seller_id):
 
 
 def sellerProducts(request, seller_id):
-    seller = Profile.objects.get(pk=seller_id)
-    sellerProducts = Product.objects.filter(seller=seller)
+    try:
+        # try to access seller through seller id
+        seller = Profile.objects.get(pk=seller_id)
+        sellerProducts = Product.objects.filter(seller=seller)
+    except Exception:
+        # else it must be a user id
+        user = User.objects.get(pk=seller_id)
+        seller = user.user_profile.all().first()
+        sellerProducts = Product.objects.filter(
+            seller=seller.pk)
     context = {
         "products": sellerProducts
     }
