@@ -49,6 +49,7 @@ Info {% endblock %} {% block body %} {% if product.is_closed %}
   <div class="productDivider"></div>
   <section class="info-section float-md-end">
     <h2>{{product.title}}</h2>
+    <h2>{{product.price}}</h2>
     <p>
       sold by
       <a href="{% url 'sellerInfo' product.seller.pk %}"
@@ -56,8 +57,13 @@ Info {% endblock %} {% block body %} {% if product.is_closed %}
       >
     </p>
     <p>{{product.long_desc}}</p>
+    {% if product.seller.name.lower == request.user.username.lower %}
+    <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
+    <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
+    {% else %}
     <button class="btn btn-outline-success">Buy</button>
     <button class="btn btn-outline-primary">Add to cart</button>
+    {% endif %}
   </section>
 </div>
 {% endif %} {% endblock %}

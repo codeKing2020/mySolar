@@ -345,3 +345,36 @@ def orderInfo(request, deliveryPK, action):
         return sellerDash(request)
     else:
         return render(request, "mySolar/fail.html", {'message': "We don't know why you're here. <br> Seeing this page by mistake? Contact us! Go to the help page and submit a query."})
+
+
+def editProduct(request, productPK, productAction):
+    # take product
+    # if it's for editing
+    # return form page
+    # take in info given and do something with it (has to be inside the same if statement but also in an is post method statement)
+    # redirect to finished product (just return function of viewProduct ting)
+    # else if it's for deleting
+    # take the post
+    # delete it
+    # redirect to products page
+    productObject = Product.objects.get(pk=productPK)
+    if productAction == "edit":
+        if request.method == "GET":
+            productForm = createProductForm(instance=productObject)
+            return render(request, 'mySolar/createProduct.html', {"form": productForm, "productPK": productPK})
+        elif request.method == "POST":
+            # process form
+            product_form = createProductForm(request.POST)
+            # if form is valid
+            if product_form.is_valid():
+                product_form.instance.seller = productObject.seller
+                # save the info
+                product_form.save()
+                # redirect to product page
+                return product(request, productPK)
+            else:
+                # create context dict which stores errors and other stuff
+                return render(request, 'mySolar/createProduct.html', {"form": product_form, "productPK": productPK})
+    elif productAction == "delete":
+        productObject.delete()
+        return sellerProducts(request, productObject.seller.pk)

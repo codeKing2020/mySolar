@@ -139,12 +139,12 @@ class delivery_info(models.Model):
         (ONLINE, "Online")
     ]
     seller = models.ForeignKey(
-        Profile, on_delete=models.SET(close_delivery), related_name="seller_deliveryInfo")
+        Profile, on_delete=models.SET(close_delivery()), related_name="seller_deliveryInfo")
     item = models.ForeignKey(
-        Product, on_delete=models.SET(close_delivery), related_name="product_deliveryInfo")
+        Product, on_delete=models.SET(close_delivery()), related_name="product_deliveryInfo")
     amount_of_item = models.IntegerField(null=False, default=1)
     customer = models.ForeignKey(
-        User, on_delete=models.SET(close_delivery), related_name="customer_deliveryInfo")
+        User, on_delete=models.SET(close_delivery()), related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField(verbose_name=(
         "Delivery Date"), auto_now_add=False, null=False, blank=False)
     location = models.CharField(max_length=128)

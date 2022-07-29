@@ -1,0 +1,11 @@
+{% extends 'mySolar/layout.html' %} {% block title %} Edit Product {% endblock%}
+{% block body %}
+<form
+  action="{% url 'editProduct' productPK 'edit' %}"
+  method="POST"
+  class="border text-center my-3"
+>
+  {%csrf_token%} {{form}}
+  <input class="btn btn-primary" type="submit" value="Edit" />
+</form>
+{% endblock %}
