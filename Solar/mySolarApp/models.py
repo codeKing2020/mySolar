@@ -1,5 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
+
+
+def get_sentinel_profile():
+    return Profile().objects.get_or_create(username='deleted')[0]
+
+
+def get_sentinel_product():
+    return Product().objects.get_or_create(username='deleted')[0]
 
 # Create your models here.
 
@@ -32,9 +45,6 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-    def deactivate_shopkeeper(self):
-        self.is_active = False
-        self.save()
     """
     Profile model
 
@@ -48,7 +58,7 @@ class Profile(models.Model):
         identification number of shop owner for authenticity
     """
     shopkeeper = models.ForeignKey(
-        User, on_delete=models.SET(deactivate_shopkeeper), related_name="user_profile")
+        User, on_delete=models.SET(get_sentinel_user), related_name="user_profile")
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
     profile_pic = models.ImageField(
@@ -62,9 +72,7 @@ class Profile(models.Model):
 
 
 class Product(models.Model):
-    def close_product(self):
-        self.is_closed = True
-        self.save()
+
     """
     Product model
 
@@ -97,7 +105,7 @@ class Product(models.Model):
     ]
 
     seller = models.ForeignKey(
-        Profile, on_delete=models.SET(close_product), related_name="product_seller")
+        Profile, on_delete=models.SET(get_sentinel_profile), related_name="product_seller")
     title = models.CharField(max_length=64)
     pic = models.ImageField(blank=True, height_field=None,
                             width_field=None, upload_to='product_images')
@@ -113,10 +121,6 @@ class Product(models.Model):
 
 
 class delivery_info(models.Model):
-    def close_delivery(self):
-        self.closed = True
-        self.save()
-
     """
     delivery_info model
 
@@ -139,12 +143,12 @@ class delivery_info(models.Model):
         (ONLINE, "Online")
     ]
     seller = models.ForeignKey(
-        Profile, on_delete=models.SET(close_delivery()), related_name="seller_deliveryInfo")
+        Profile, on_delete=models.SET(get_sentinel_profile), related_name="seller_deliveryInfo")
     item = models.ForeignKey(
-        Product, on_delete=models.SET(close_delivery()), related_name="product_deliveryInfo")
+        Product, on_delete=models.SET(get_sentinel_product), related_name="product_deliveryInfo")
     amount_of_item = models.IntegerField(null=False, default=1)
     customer = models.ForeignKey(
-        User, on_delete=models.SET(close_delivery()), related_name="customer_deliveryInfo")
+        User, on_delete=models.SET(get_sentinel_user), related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField(verbose_name=(
         "Delivery Date"), auto_now_add=False, null=False, blank=False)
     location = models.CharField(max_length=128)
