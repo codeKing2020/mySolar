@@ -43,26 +43,10 @@ mySolar {% endblock %} {% block body %}
           {% else %}
           <td>{{del_info.customer.email}}</td>
           <td>
-            <a
-              class="btn btn-outline-primary"
-              href="{% url 'orderInfo' del_info.pk 'view' %}"
-              >View</a
-            >
-            <a
-              class="btn btn-outline-primary"
-              href="{% url 'orderInfo' del_info.pk 'process' %}"
-              >Process</a
-            >
-            <a
-              class="btn btn-outline-primary"
-              href="{% url 'orderInfo' del_info.pk 'delivered' %}"
-              >Delivered</a
-            >
-            <a
-              class="btn btn-outline-primary"
-              href="{% url 'orderInfo' del_info.pk 'nothing' %}"
-              >Delete</a
-            >
+            <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'view' %}">View</a>
+            <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'process' %}">Process</a>
+            <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'delivered' %}">Delivered</a>
+            <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'delete' %}">Delete</a>
           </td>
           {% endif %}
         </tr>

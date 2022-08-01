@@ -38,6 +38,9 @@ class createProductForm(forms.ModelForm):
     class Meta:
         model = Product
         exclude = ("is_closed", "in_stock", "seller")
+        labels = {
+            "pic": "Picture of Item"
+        }
 
 
 class delivery_infoForm(forms.ModelForm):

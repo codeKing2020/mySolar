@@ -24,5 +24,8 @@ urlpatterns = [
     path('createProduct', createProduct, name="createProduct"),
     path("orderInfo<int:deliveryPK><str:action>", orderInfo, name="orderInfo"),
     path("editProduct<int:productPK><str:productAction>",
-         editProduct, name="editProduct")
+         editProduct, name="editProduct"),
+    path('newProduct', createProduct, name="newProduct"),
+    path("sellerProfile", sellerProfile, name="sellerProfile")
+
 ]

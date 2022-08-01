@@ -29,18 +29,18 @@ mySolar {% endblock %} {% block body %}
             >
           </h6>
           <p class="card-text">{{ product.short_desc }}</p>
-          {% if product.is_closed %}
-          <p class="card-text text-danger fs-2">Product is closed.</p>
+         {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
+          <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
+          <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
           {% else %}
-          <a href="#" class="btn btn-outline-success card-link">Respect</a>
-          <a href="#" class="btn btn-outline-warning text-dark card-link"
-            >It's ok</a
-          >
-          {% endif %}
+          <button class="btn btn-outline-success">Buy</button>
+          <button class="btn btn-outline-primary">Add to cart</button>
+        {% endif %}
         </div>
       </div>
     </a>
   </div>
   {% endfor %}
 </div>
+
 {% endblock %}

@@ -164,7 +164,6 @@ def sellerProducts(request, seller_id):
     return render(request, "mySolar/store.html", context)
 
 
-@login_required
 def success(request):
     return render(request, "mySolar/success.html")
 
@@ -300,16 +299,21 @@ def sellerDash(request):
 def createProduct(request):
     if request.user.is_shopkeeper or request.user.is_staff:
         if request.method == "POST":
-            user_form = createProductForm(request.POST)
+            product_form = createProductForm(request.POST)
             # if form is valid
-            if user_form.is_valid():
+            if product_form.is_valid():
+                # access user through user model
+                user = User.objects.get(pk=request.user.pk)
+                seller = user.user_profile.all().first()
+                # punch in seller to product form instance
+                product_form.instance.seller = seller
                 # take info and save
-                user_form.save()
-                # redirect to dashboard
-                redirect("sellerDash")
+                product_form.save()
+                # redirect to product page
+                return product(request, product_form.instance.pk)
         else:
-            user_form = createProductForm(request.POST)
-            return render(request, "mySolar/sellerDash.html", {"user_form": user_form})
+            product_form = createProductForm()
+            return render(request, "mySolar/newProduct.html", {"product_form": product_form})
     else:
         return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
 
@@ -341,7 +345,7 @@ def orderInfo(request, deliveryPK, action):
         # search up delivery info
         # send to page with info
         info = delivery_info.objects.get(pk=deliveryPK)
-        info.close_delivery
+        info.delete()
         return sellerDash(request)
     else:
         return render(request, "mySolar/fail.html", {'message': "We don't know why you're here. <br> Seeing this page by mistake? Contact us! Go to the help page and submit a query."})
@@ -367,14 +371,24 @@ def editProduct(request, productPK, productAction):
             product_form = createProductForm(request.POST)
             # if form is valid
             if product_form.is_valid():
+                # add user info
                 product_form.instance.seller = productObject.seller
-                # save the info
+                # save
                 product_form.save()
+                # delete productObject to make way for the other one
+                Product.objects.get(pk=productPK).delete()
                 # redirect to product page
-                return product(request, productPK)
+                return product(request, product_form.instance.pk)
             else:
                 # create context dict which stores errors and other stuff
                 return render(request, 'mySolar/createProduct.html', {"form": product_form, "productPK": productPK})
     elif productAction == "delete":
         productObject.delete()
         return sellerProducts(request, productObject.seller.pk)
+
+
+def sellerProfile(request):
+    context = {
+        "info": request.user
+    }
+    return render(request, "mySolar/sellerProfile.html", context)
