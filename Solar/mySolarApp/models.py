@@ -43,7 +43,7 @@ class Profile(models.Model):
         how active they'll be per week (could be useful later for search optimisation)
         identification number of shop owner for authenticity
     """
-    shopkeeper = models.ForeignKey(
+    shopkeeper = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="user_profile")
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
@@ -153,7 +153,7 @@ class sellerRequests(models.Model):
     stores info about users who have requested to sell but are not yet authorised
     once authorised, their info must be allocated to new fields in the system and then this field is deleted
     """
-    sellerAcc = models.ForeignKey(User, on_delete=models.CASCADE)
+    sellerAcc = models.OneToOneField(User, on_delete=models.CASCADE)
     sellerFName = models.CharField(max_length=24, blank=False)
     sellerLName = models.CharField(max_length=24, blank=False)
     businessEmail = models.EmailField(blank=False)
