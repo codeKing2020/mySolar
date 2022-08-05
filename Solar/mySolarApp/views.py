@@ -1,3 +1,4 @@
+import re
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
@@ -155,7 +156,7 @@ def sellerProducts(request, seller_id):
     except Exception:
         # else it must be a user id
         user = User.objects.get(pk=seller_id)
-        seller = user.user_profile.all().first()
+        seller = user.user_profile
         sellerProducts = Product.objects.filter(
             seller=seller.pk)
     context = {
@@ -304,7 +305,7 @@ def createProduct(request):
             if product_form.is_valid():
                 # access user through user model
                 user = User.objects.get(pk=request.user.pk)
-                seller = user.user_profile.all().first()
+                seller = user.user_profile
                 # punch in seller to product form instance
                 product_form.instance.seller = seller
                 # take info and save
@@ -387,8 +388,66 @@ def editProduct(request, productPK, productAction):
         return sellerProducts(request, productObject.seller.pk)
 
 
+@login_required
 def sellerProfile(request):
-    context = {
-        "info": request.user
-    }
-    return render(request, "mySolar/sellerProfile.html", context)
+    # if get request
+    # create form out of user instance
+    # create form out of profile instance
+    # serve out
+    # else if post request
+    # process it
+    # update/save
+    # recurse (call function again but this time being a get request)
+    if request.method == "GET":
+        if request.user.is_shopkeeper:
+            shopkeeperObject = Profile.objects.get(
+                shopkeeper=request.user)
+            shopkeeperForm = sellerProfileForm(instance=shopkeeperObject)
+            userObject = User.objects.get(pk=request.user.pk)
+            userForm = userProfileForm(instance=userObject)
+            context = {
+                "userForm": userForm,
+                "shopkeeperForm": shopkeeperForm
+            }
+            return render(request, "mySolar/userProfile.html", context)
+        elif request.user.is_shopkeeper == False:
+            userObject = User.objects.get(pk=request.user.pk)
+            userForm = userProfileForm(instance=userObject)
+            context = {
+                "userForm": userForm,
+            }
+            return render(request, "mySolar/userProfile.html", context)
+        else:
+            return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
+    else:
+        if request.user.is_shopkeeper:
+            user_profile_form = userProfileForm(request.POST)
+            shopkeeper_profile_form = sellerProfileForm(request.POST)
+            if user_profile_form.is_valid() and shopkeeper_profile_form.is_valid():
+                # don't forget to add user info!
+                return HttpResponse(f"valid! {user_profile_form} and {shopkeeper_profile_form}")
+            else:
+                return render(request, "mySolar/userProfile.html", {"userForm": user_profile_form, "shopkeeperForm": shopkeeper_profile_form})
+        elif request.user.is_shopkeeper == False:
+            user_profile_form = userProfileForm(request.POST)
+            if user_profile_form.is_valid():
+                # don't forget to add user info!
+                return HttpResponse(f"valid! {user_profile_form}")
+            else:
+                return render(request, "mySolar/userProfile.html", {"userForm": user_profile_form})
+
+
+@login_required
+def delAcc(request):
+    # take user from request
+    # take object from model
+    # delete
+    # redirect
+    user = User.objects.get(pk=request.user.pk)
+    user.delete()
+    return redirect("/")
+
+
+@login_required
+def areYouSure(request):
+    return render(request, "mySolar/areYouSure.html")

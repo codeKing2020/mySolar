@@ -2,6 +2,25 @@ from django import forms
 from .models import *
 
 
+class userProfileForm(forms.ModelForm):
+    """Form for changing User values"""
+    class Meta:
+        model = User
+        exclude = (
+            "is_active", "beSellerFormSubmitted", "groups",
+            "password", "user_permissions", "is_staff",
+            "is_superuser", "last_login", "date_joined",
+            "is_shopkeeper"
+        )
+
+
+class sellerProfileForm(forms.ModelForm):
+    """Form for changing seller info"""
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
 class SellerRequestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

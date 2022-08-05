@@ -1,0 +1,14 @@
+{% extends 'mySolar/dashLayout.html' %}
+
+{% block title %}
+Are you sure?
+{% endblock %}
+
+{% block body %}
+<div class="container text-center mt-3">
+    <h1>Are you sure you want to delete your account?</h1>
+    <p class="fs-4 text-danger">You will lose ALL your information and never be able to recover them.</p>
+    <a role="button" href="{% url 'delAcc' %}" class="btn btn-outline-warning btn-lg w-75">Delete Account</a>
+    <p>So sad to see you go! :(</p>
+</div>
+{% endblock %}

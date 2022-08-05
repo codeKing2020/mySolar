@@ -2,7 +2,8 @@
   box-sizing: border-box;
 }
 
-input, textarea {
+input,
+textarea {
   font-size: .8rem;
   letter-spacing: 1px;
   padding: 14px;
@@ -15,11 +16,13 @@ input, textarea {
   width: 75%;
   text-align: center;
 }
+
 label {
   font-size: 1.2rem;
   display: block;
   font-weight: bold;
 }
+
 form {
   text-align: center;
   margin: auto auto;
@@ -47,9 +50,11 @@ form {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  align-items: center; /* try adding baseline instead */
+  align-items: center;
+  /* try adding baseline instead */
   /* ADD flex wrap functionalitites for media queries */
 }
+
 .center-button {
   text-align: center;
 }
@@ -86,7 +91,7 @@ form {
     padding: 4%;
     margin: 2%;
   }
-  
+
   .info-section {
     width: 100%;
     padding: 4%;
@@ -96,7 +101,7 @@ form {
 
 /* FOR FORM ERRORS */
 
-.errorlist{
+.errorlist {
   text-align: center;
   font-size: 21px;
   color: white;

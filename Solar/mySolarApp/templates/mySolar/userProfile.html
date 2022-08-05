@@ -1,0 +1,19 @@
+{% extends 'mySolar/dashLayout.html' %}
+
+{% block body %}
+<div class="text-center w-100 mb-3">
+    <h1 class="bg-info w-100 text-white mb-0 p-4">Profile</h1>
+    <h3 class="text-white bg-primary mt-0 p-2">Your Personal infomation</h3>
+    <a href="{% url 'password_change' %}" class="my-1 btn btn-outline-secondary btn-lg w-75">Change Password</a>
+    <form action="{% url 'sellerProfile' %}" method="post">
+        {{userForm}}
+        {% if shopkeeperForm %}
+        <h3 class="text-white bg-secondary p-2">Your shop's infomation</h3>
+        {{shopkeeperForm}}
+        {% endif %}
+        <input type="submit" value="Edit" class="btn btn-primary">
+    </form>
+    <a role="button" class="btn btn-outline-danger btn-lg w-75" href="{% url 'areYouSure' %}">Delete
+        account</a>
+</div>
+{% endblock %}

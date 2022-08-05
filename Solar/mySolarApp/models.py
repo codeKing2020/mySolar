@@ -54,7 +54,6 @@ class Profile(models.Model):
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
     identification = models.CharField(max_length=13)
-    is_active = models.BooleanField(default=True)
 
 
 class Product(models.Model):
@@ -100,7 +99,6 @@ class Product(models.Model):
     category = models.CharField(max_length=10, choices=CATEGORY, default=MISC)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     in_stock = models.BooleanField(default=True)
-    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'

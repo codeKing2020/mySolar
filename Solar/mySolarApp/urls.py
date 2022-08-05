@@ -1,8 +1,9 @@
-from django.urls import path
+from django.urls import include, path
 
 from .views import *
 
 urlpatterns = [
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', index, name="index"),
     path("login", sign_in, name="login"),
     path("register", register, name="register"),
@@ -26,6 +27,7 @@ urlpatterns = [
     path("editProduct<int:productPK><str:productAction>",
          editProduct, name="editProduct"),
     path('newProduct', createProduct, name="newProduct"),
-    path("sellerProfile", sellerProfile, name="sellerProfile")
-
+    path("sellerProfile", sellerProfile, name="sellerProfile"),
+    path("delAcc", delAcc, name="delAcc"),
+    path("areYouSure", areYouSure, name="areYouSure")
 ]
