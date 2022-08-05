@@ -38,7 +38,6 @@ class Profile(models.Model):
     links to user model and stores:
         name of company
         bio of company
-        profile picture and banner picture
         location of store
         how active they'll be per week (could be useful later for search optimisation)
         identification number of shop owner for authenticity
@@ -47,10 +46,6 @@ class Profile(models.Model):
         User, on_delete=models.CASCADE, related_name="user_profile")
     name = models.CharField(max_length=64)
     bio = models.CharField(max_length=1000)
-    profile_pic = models.ImageField(
-        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
-    banner_pic = models.ImageField(
-        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
     identification = models.CharField(max_length=13)
@@ -159,10 +154,6 @@ class sellerRequests(models.Model):
     name = models.CharField(max_length=64, unique=True, blank=False)
     location = models.CharField(max_length=128, blank=False)
     bio = models.CharField(max_length=1000, blank=False)
-    profile_pic = models.ImageField(
-        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
-    banner_pic = models.ImageField(
-        blank=True, height_field=None, width_field=None, upload_to='profile_and_banner_images')
     identification = models.CharField(max_length=13, unique=True, blank=False)
 
 
