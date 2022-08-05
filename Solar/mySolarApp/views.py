@@ -257,6 +257,8 @@ def categoryProducts(request):
             user_data = user_form.cleaned_data.get("category")
             products = Product.objects.filter(category=user_data)
             user_form = categoryProductsForm(request.POST)
+            if len(products) < 1:
+                products = "None"
             context = {
                 "categoryForm": user_form,
                 "products": products

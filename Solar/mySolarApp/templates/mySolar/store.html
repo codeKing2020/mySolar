@@ -2,45 +2,46 @@
 mySolar {% endblock %} {% block body %}
 <h1>Store</h1>
 {% if categoryForm %}
-<form action="categoryProducts" method="POST">
-  {% csrf_token %} {{categoryForm}}
-  <button type="submit">Search</button>
+<form action="categoryProducts" method="POST" class="w-50 text-center d-flex flex-column">
+  {% csrf_token %}
+  <div class="p-2">
+    {{categoryForm}}
+  </div>
+  <button type="submit" class="btn btn-success">Search</button>
 </form>
 {% endif %}
 <br />
+{% if products == "None" %}
+<h1 class="m-2 p-3 text-center">There are no products in this category yet, check again soon!</h1>
+{% else %}
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mb-3">
   <!-- START FOR LOOP HERE -->
   {% for product in products %}
   <div class="col mb-4">
     <a href="{% url 'product' product.pk %}">
       <div class="card" style="width: 18rem">
-        <img
-          src="{% static 'respect1000.jpg' %}"
-          class="card-img-top"
-          alt="..."
-        />
+        <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="..." />
         <div class="card-body">
           <h5 class="card-title">{{ product.title }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ product.price }}</h6>
           <h6 class="card-subtitle mb-2 text-muted">
             Sold by
-            <a href="{% url 'sellerInfo' product.seller.pk %}"
-              ><b>{{product.seller.name }}</b></a
-            >
+            <a href="{% url 'sellerInfo' product.seller.pk %}"><b>{{product.seller.name }}</b></a>
           </h6>
           <p class="card-text">{{ product.short_desc }}</p>
-         {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
+          {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
           <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
-          <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
-          {% else %}
-          <button class="btn btn-outline-success">Buy</button>
-          <button class="btn btn-outline-primary">Add to cart</button>
-        {% endif %}
+            <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
+            {% else %}
+            <button class="btn btn-outline-success">Buy</button>
+            <button class="btn btn-outline-primary">Add to cart</button>
+            {% endif %}
         </div>
       </div>
     </a>
   </div>
   {% endfor %}
 </div>
+{% endif %}
 
 {% endblock %}

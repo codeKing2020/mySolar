@@ -96,7 +96,7 @@ class Product(models.Model):
     in_stock = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category, isclosed: {self.is_closed}'
+        return f'{self.title} instock: {self.in_stock} sold by {self.seller} for {self.price} in the {self.category} category'
 
 
 class delivery_info(models.Model):
