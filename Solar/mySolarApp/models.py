@@ -116,11 +116,9 @@ class delivery_info(models.Model):
     """
     # payment methods
     ONPOINT = "On point"
-    ONLINE = "Online"
 
     PAYMENT = [
         (ONPOINT, "On point"),
-        (ONLINE, "Online")
     ]
     seller = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="seller_deliveryInfo")

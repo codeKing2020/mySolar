@@ -19,38 +19,42 @@ def index(request):
 def sign_in(request):
     # get the next info from the POST area (forms)
     next_page = request.POST.get('next')
-    # if the user is authenticated
+    """ # if the user is authenticated
     if request.user.is_authenticated:
+        # if the next page is shown
         if next_page is not None:
+            # redirect to the next page
             return HttpResponseRedirect(next_page)
+        # else redirect to home page
         return render(request, "mySolar/index.html")
-    else:
-        if request.method == "POST":
-            # Attempt to sign user in
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = authenticate(request, username=username, password=password)
+    else: """
+    if request.method == "POST":
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
 
-            # Check if authentication successful
-            if user is not None:
-                # keep user info in session
-                login(request, user)
-                # if there is a page they have to go to next
-                if next_page is not None:
-                    # go to it
-                    return HttpResponseRedirect(next_page)
-                # else just redirect to the home page
-                return HttpResponseRedirect(reverse("index"))
-            # there were wrong details entered
-            else:
-                return render(request, "mySolar/login.html", {
-                    "message": "Invalid username and/or password."
-                })
-        # this was a GET request
+        # Check if authentication successful
+        if user is not None:
+            # keep user info in session
+            login(request, user)
+            # if there is a page they have to go to next
+            if next_page is not None:
+                # go to it
+                return HttpResponseRedirect(next_page)
+            # else just redirect to the home page
+            return HttpResponseRedirect(reverse("index"))
+        # there were wrong details entered
         else:
-            return render(request, "mySolar/login.html")
+            return render(request, "mySolar/login.html", {
+                "message": "Invalid username and/or password."
+            })
+    # this was a GET request
+    else:
+        return render(request, "mySolar/login.html")
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
