@@ -3,6 +3,7 @@ from django.test import Client
 from .models import *
 from .views import *
 import Solar
+from django.core.exceptions import ObjectDoesNotExist
 
 Solar.settings.ALLOWED_HOSTS += ['127.0.0.1', 'localhost', 'testserver', ]
 c = Client()
@@ -87,3 +88,50 @@ class UserTestCase(TestCase):
         # incorrect username but correct password
         response = c.post('/login', {"username": "barry", "password": "bar"})
         self.assertContains(response, "Invalid username and/or password.")
+
+    def test_goodDelete(self):
+        # try delete an account that does exist
+        # return redirect
+        # additionally ensure that user does not exist
+
+        # login user
+        c.login(username="foo", password="foo")
+        # attempt to go to delete account site
+        response = c.get('/delAcc')
+        # assert that there is an error when trying to get user
+        self.assertRaises(ObjectDoesNotExist, User.objects.get, username="foo")
+        # assert that the response code is a redirect
+        self.assertEqual(response.status_code, 302)
+
+    def test_badDelete(self):
+        # try to unsuccessfully delete a user that does not exist
+
+        # first stage: login a user that does not exist
+        response = c.login(username="non-existent", password="non-existent")
+        self.assertFalse(response)
+
+        # no need for other stages I believe, as long as the user is caught ebfore logging in, especially since you need to be logged in to delete your account
+
+    def test_delete_shopkeeper_assertNoProducts(self):
+        # test to see whether products of the shopkeeper remain even after deletion
+
+        # first delete one of the products and assert that there is nothing
+        product = Product.objects.get(title="solar ting")
+        product.delete()
+
+        self.assertRaises(ObjectDoesNotExist,
+                          Product.objects.get, title="solar ting")
+
+        # nothing must remain after purging the shopkeeper
+        # check if profile remains after deletion
+        profile = Profile.objects.get(name="bar's shop")
+        profile.delete()
+
+        self.assertRaises(ObjectDoesNotExist,
+                          Profile.objects.get, name="bar's shop")
+
+        # check if products remain after profile has been deleted
+        self.assertRaises(ObjectDoesNotExist,
+                          Product.objects.get, title="solar ting")
+        self.assertRaises(ObjectDoesNotExist,
+                          Product.objects.get, title="solar ting 2")
