@@ -137,7 +137,7 @@ def shop(request):
 
 
 def product(request, product_id):
-    product = Product.objects.get(pk=product_id)
+    product = get_object_or_404(Product, pk=product_id)
     context = {
         "product": product
     }
@@ -145,7 +145,7 @@ def product(request, product_id):
 
 
 def sellerInfo(request, seller_id):
-    seller = Profile.objects.get(pk=seller_id)
+    seller = get_object_or_404(Profile, pk=seller_id)
     context = {
         "seller": seller,
     }
@@ -177,8 +177,11 @@ def success(request):
 def beSeller(request):
     # Get User
     USER = request.user
-    # Get user in database by their username
+    # Get user from database by their username
     a = User.objects.get(username=USER.get_username())
+    # if user is not a buyer, either a seller or staff
+    if a.is_shopkeeper is not False:
+        return render(request, "mySolar/fail.html", {"message": "You are not allowed to be here, because you are not authorized to apply to be a seller."})
     # if the user already submitted the form before
     if a.beSellerFormSubmitted:
         # create context dict
@@ -304,7 +307,7 @@ def sellerDash(request):
 
 @login_required
 def createProduct(request):
-    if request.user.is_shopkeeper or request.user.is_staff:
+    if request.user.is_shopkeeper:
         if request.method == "POST":
             product_form = createProductForm(request.POST)
             # if form is valid
