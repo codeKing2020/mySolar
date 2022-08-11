@@ -257,27 +257,27 @@ def requestsAndQuestions(request):
 def categoryProducts(request):
     if request.method == 'POST':
         # process form
-        user_form = categoryProductsForm(request.POST)
+        category_form = categoryProductsForm(request.POST)
         # if form is valid
-        if user_form.is_valid():
+        if category_form.is_valid():
             # get products in that category
-            user_data = user_form.cleaned_data.get("category")
+            user_data = category_form.cleaned_data.get("category")
             products = Product.objects.filter(category=user_data)
-            user_form = categoryProductsForm(request.POST)
+            category_form = categoryProductsForm(request.POST)
             if len(products) < 1:
                 products = "None"
             context = {
-                "categoryForm": user_form,
+                "categoryForm": category_form,
                 "products": products
             }
-            # redirect with those products
+            # render with those products
             return render(request, 'mySolar/store.html', context)
 
         # else form isn't valid
         else:
             # create context dict which stores errors and other stuff
             context = {
-                'user_form': user_form,
+                'user_form': category_form,
             }
 
             return render(request, 'mySolar/store.html', context)

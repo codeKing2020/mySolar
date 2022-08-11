@@ -18,7 +18,7 @@ class sellerProfileForm(forms.ModelForm):
     """Form for changing seller info"""
     class Meta:
         model = Profile
-        fields = "__all__"
+        exclude = ("shopkeeper",)
 
 
 class SellerRequestForm(forms.ModelForm):
@@ -69,6 +69,11 @@ class delivery_infoForm(forms.ModelForm):
 
 
 class askQuestionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(askQuestionForm, self).__init__(*args, **kwargs)
+        self.fields['question'].required = True
+
     class Meta:
         model = userQuestions
         exclude = ("is_FAQ",)

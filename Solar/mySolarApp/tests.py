@@ -85,8 +85,16 @@ class UserTestCase(TestCase):
             "price": 24,
             "in_stock": True
         }
-    # now to test our data
+        # create question
+        userQuestions.objects.create(
+            email="foo@test.com",
+            question="Can I get a hunyah!?"
+        )
+        # create superuser/staff
+        User.objects.create_user(
+            "king", "king@king.com", "king", is_staff=True, is_superuser=True)
 
+    # now to test our data
     def test_registerUser(self):
         """
         alter dictionary declared to fit the name of our smaple user
@@ -342,32 +350,243 @@ class UserTestCase(TestCase):
         # so login buyer first because they have the "authority"
         c.login(username=self.buyerDict["username"],
                 password=self.buyerDict["password"])
+        # assert that user hasn't submitted form yet
+        self.assertFalse(User.objects.get(
+            username=self.buyerDict['username']).beSellerFormSubmitted)
         # fill in form and send
-        response = c.post("beSeller", )
+        response = c.post("/beSeller", {
+            "name": "Goofy Industries",
+            "sellerFName": 'goof',
+            "sellerLName": 'ball',
+            "businessEmail": 'goofball@gmail.com',
+            "businessContact": int("02927323122"),
+            "identification": int("02927323122"),
+            "bio": "keeping it goofy",
+            "location": "Goofy street"
+        })
+        # it must pass
+        # if it has passed:
+        # we must see beSellerFormSubmitted set to True
+        # and we must see that there is a new entry, find it by using User model
+        # we are rendered a page (200 OK)
+        user = User.objects.get(username=self.buyerDict['username'])
+        self.assertEqual(len(sellerRequests.objects.filter(sellerAcc=user)), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(user.beSellerFormSubmitted)
 
     def test_beSellerReRequest(self):
+        # for the wanna be buyers that want to request again to be a seller
         """
+        user request
         user re-request
         expect certain message
         """
-        pass
+        # user has to be logged in first
+        # so login buyer first because they have the "authority"
+        c.login(username=self.buyerDict["username"],
+                password=self.buyerDict["password"])
+        # assert that user hasn't submitted form yet
+        self.assertFalse(User.objects.get(
+            username=self.buyerDict['username']).beSellerFormSubmitted)
+        # fill in form and send
+        response = c.post("/beSeller", {
+            "name": "Goofy Industries",
+            "sellerFName": 'goof',
+            "sellerLName": 'ball',
+            "businessEmail": 'goofball@gmail.com',
+            "businessContact": int("02927323122"),
+            "identification": int("02927323122"),
+            "bio": "keeping it goofy",
+            "location": "Goofy street"
+        })
+        # it must pass
+        # if it has passed:
+        # we must see beSellerFormSubmitted set to True
+        # and we must see that there is a new entry, find it by using User model
+        # we are rendered a page (200 OK)
+        user = User.objects.get(username=self.buyerDict['username'])
+        self.assertEqual(len(sellerRequests.objects.filter(sellerAcc=user)), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(user.beSellerFormSubmitted)
+
+        # re-request
+        response = c.post("/beSeller", {
+            "name": "Goofy Industries",
+            "sellerFName": 'goof',
+            "sellerLName": 'ball',
+            "businessEmail": 'goofball@gmail.com',
+            "businessContact": int("02927323122"),
+            "identification": int("02927323122"),
+            "bio": "keeping it goofy",
+            "location": "Goofy street"
+        })
+
+        # assert that we are rendered a new page
+        self.assertEqual(response.status_code, 200)
+        # assert that we are told that we are not allowed to re-apply
+        self.assertContains(
+            response, "You have already applied to become a seller")
+        # assert that no new records were made
+        # first search for sellerRequest field that matches our user
+        sellerRequest = sellerRequests.objects.filter(sellerAcc=user)
+        self.assertEqual(len(sellerRequest), 1)
+
+        # assert that beSellerFormSubmitted is True
+        self.assertTrue(user.beSellerFormSubmitted)
 
     def test_beSellerAlreadyShopkeeper(self):
         """
-        user who is already shopkeeper
+        user who is already shopkeeper tries to request
         expect response and message
         """
-        pass
+        # user has to be logged in first
+        # so login seller first
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+        # assert that user hasn't submitted form yet
+        self.assertFalse(User.objects.get(
+            username=self.buyerDict['username']).beSellerFormSubmitted)
+        # fill in form and send
+        response = c.post("/beSeller", {
+            "name": "Goofy Industries",
+            "sellerFName": 'goof',
+            "sellerLName": 'ball',
+            "businessEmail": 'goofball@gmail.com',
+            "businessContact": int("02927323122"),
+            "identification": int("02927323122"),
+            "bio": "keeping it goofy",
+            "location": "Goofy street"
+        })
+        # assert we are rendered a page
+        self.assertEqual(200, response.status_code)
+        # assert it contains the error message
+        self.assertContains(response, "You are not allowed to be here")
+        # assert it renders the right page
+        self.assertEqual("mySolar/fail.html", response.templates[0].name)
+        # assert that no new entries with user of this kind were made
+        user = User.objects.get(username=self.sellerDict['username'])
+        self.assertEqual(len(sellerRequests.objects.filter(sellerAcc=user)), 0)
 
-    def test_beSellerAlreadySubmitted(self):
-        # for the wanna be buyers that want to request again to be a seller
-        pass
+    def test_Questions(self):
+        # test by getting the questions from database
+        que = userQuestions.objects.all()
+        # make sure there's only one
+        self.assertEqual(len(que), 1)
+        # login superuser
+        response = c.login(username="king",
+                           password="king")
+        # check how many questions they receive when they request
+        response = c.get("/requestsAndQuestions")
+        self.assertContains(response, "Can I get a ")
 
-    def testRequestsAndQuestions(self):
-        # test by checking requests
-
-        # test by checking questions
-        # check how many questions there are when request
+    def test_QuestionsDeleted(self):
         # delete the question
-        # check again
+        # assert that there are no questions
+        que = userQuestions.objects.all()
+        que.delete()
+
+        que = userQuestions.objects.all()
+
+        self.assertEqual(len(que), 0)
+
+        # login user
+        response = c.login(username="king",
+                           password="king")
+
+        # check how many questions there are when request
+        response = c.get("/requestsAndQuestions")
+        self.assertNotContains(response, "Can I get a ")
+
+    def test_CategoryProducts(self):
+        """
+        categoryProducts for seeing the products in a certain category
+            request category
+            expect response
+            expect certain product
+        """
+        # assert that we have the product
+        self.assertEqual(len(Product.objects.filter(title="solar ting")), 1)
+        # send a request for that product category
+        response = c.post("/categoryProducts", {
+            "category": "MISC"
+        })
+        # assert we get a proper response
+        self.assertEqual(response.status_code, 200)
+        # assert that we get the right product
+        self.assertContains(response, "solar ting")
+        # assert it doesn't contain a product from another category
+        self.assertNotContains(response, "solar ting 2")
+
+    def test_CategoryProductsDeleted(self):
+        """
+        delete product
+            request category
+            expect response
+            expect certain message
+        """
+        # get the product and delete it
+        product = Product.objects.filter(category="MISC")
+        product.delete()
+
+        # send a request for that product category
+        response = c.post("/categoryProducts", {
+            "category": "MISC"
+        })
+        # assert we get a proper response
+        self.assertEqual(response.status_code, 200)
+        # assert that we get a "not found" resposne/error
+        self.assertContains(
+            response, "There are no products in this category yet")
+        # assert it doesn't contain a product from another category
+        self.assertNotContains(response, "solar ting 2")
+
+    def test_sellerDash_noOrders(self):
+        """
+        sellerDash for sellers dashboard
+            for now
+                request sellerDash, expect no orders
+        """
+        # login our shopkeeper
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+
+        # request to see seller dashboard
+        response = c.get("/sellerDash")
+
+        # expect a rendering / 200 OK response
+        self.assertEqual(response.status_code, 200)
+
+        # expect no orders
+        self.assertContains(response, "You currently do not have any orders")
+
+        # do not expect table showing results on an order to be shown
+        self.assertNotContains(response, "Payment Method")
+
+    def test_sellerDash_oneOrder(self):
+        """
+            add order
+            request sellerDash, expect order
+                do not expect orders from another person
+
+            add two orders
+                request sellerDash, expect list of orders
+                do not expect orders from another person
+        """
+        # get seller acc
+        sellerAcc = User.objects.get(username=self.sellerDict["username"])
+        profileAcc = Profile.objects.get(shopkeeper=sellerAcc)
+        # get a product
+        product = Product.objects.get(title=self.product1Dict['title'])
+        # get customer
+        buyerAcc = User.objects.get(username=self.buyerDict['username'])
+        """ # add order
+        delivery_info.objects.create(
+            seller=profileAcc,
+            item=product,
+            amount_of_item=1,
+            customer=buyerAcc,
+            # what we're left with
+            # add datetime using datetime func
+            # add location and then request the sellerdash as before but this time expecting something
+        ) """
         pass
