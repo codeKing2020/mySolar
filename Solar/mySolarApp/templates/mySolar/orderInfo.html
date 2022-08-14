@@ -29,13 +29,13 @@ About {{info.customer.username}}'s order
         <p><b>Email of customer:</b> {{info.customer.email}}</p>
         <br>
         {% if info.processed == True %}
-        <p class="text-success"><b>Order in process or has been completed.</b></p>
+        <p class="text-success"><b>Item in process or has been completed.</b></p>
         {% else %}
-        <p class="text-info"><b>Order not being processed.</b></p>
+        <p class="text-info"><b>Item not being processed.</b></p>
         <a href="{% url 'orderInfo' info.pk 'process' %}" class="btn btn-primary">Begin Processing</a>
         {% endif %}
         {% if info.delivered == True %}
-        <p class="text-success"><b>Order has been delivered.</b></p>
+        <p class="text-success"><b>Item has been delivered.</b></p>
         {% else %}
         <p class="text-danger"><b>Order not delivered.</b></p>
         <a href="{% url 'orderInfo' info.pk 'delivered' %}" class="btn btn-primary">Mark as

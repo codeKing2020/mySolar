@@ -44,7 +44,7 @@ class Profile(models.Model):
     """
     shopkeeper = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="user_profile")
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     bio = models.CharField(max_length=1000)
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
@@ -86,7 +86,7 @@ class Product(models.Model):
 
     seller = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="product_seller")
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, unique=True)
     pic = models.ImageField(blank=True, height_field=None,
                             width_field=None, upload_to='product_images')
     short_desc = models.CharField("Short Description", max_length=150)

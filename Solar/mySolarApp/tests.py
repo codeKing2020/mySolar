@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from urllib import response
 from django.test import TestCase
 from django.test import Client
@@ -93,6 +94,15 @@ class UserTestCase(TestCase):
         # create superuser/staff
         User.objects.create_user(
             "king", "king@king.com", "king", is_staff=True, is_superuser=True)
+
+        order = delivery_info.objects.create(
+            seller=profile,
+            item=Product1,
+            amount_of_item=1,
+            customer=buyer,
+            delivery_date=datetime.now(tz=timezone.utc),
+            location="123 foo street"
+        )
 
     # now to test our data
     def test_registerUser(self):
@@ -198,7 +208,7 @@ class UserTestCase(TestCase):
         response = c.login(username="non-existent", password="non-existent")
         self.assertFalse(response)
 
-        # no need for other stages I believe, as long as the user is caught ebfore logging in, especially since you need to be logged in to delete your account
+        # no need for other stages I believe, as long as the user is caught before logging in, especially since you need to be logged in to delete your account
 
     def test_delete_shopkeeper_assertNoProducts(self):
         # test to see whether products of the shopkeeper remain even after deletion
@@ -374,7 +384,7 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(user.beSellerFormSubmitted)
 
-    def test_beSellerReRequest(self):
+    def test_beSellerRequest_AGAIN(self):
         # for the wanna be buyers that want to request again to be a seller
         """
         user request
@@ -546,6 +556,8 @@ class UserTestCase(TestCase):
             for now
                 request sellerDash, expect no orders
         """
+        # delete all orders
+        delivery_info.objects.all().delete()
         # login our shopkeeper
         c.login(username=self.sellerDict["username"],
                 password=self.sellerDict["password"])
@@ -567,10 +579,6 @@ class UserTestCase(TestCase):
             add order
             request sellerDash, expect order
                 do not expect orders from another person
-
-            add two orders
-                request sellerDash, expect list of orders
-                do not expect orders from another person
         """
         # get seller acc
         sellerAcc = User.objects.get(username=self.sellerDict["username"])
@@ -579,14 +587,342 @@ class UserTestCase(TestCase):
         product = Product.objects.get(title=self.product1Dict['title'])
         # get customer
         buyerAcc = User.objects.get(username=self.buyerDict['username'])
-        """ # add order
-        delivery_info.objects.create(
+        # add order
+        """delivery_info.objects.create(
             seller=profileAcc,
             item=product,
             amount_of_item=1,
             customer=buyerAcc,
-            # what we're left with
-            # add datetime using datetime func
-            # add location and then request the sellerdash as before but this time expecting something
+            delivery_date=datetime.now(tz=timezone.utc),
+            location="123 foo street"
         ) """
-        pass
+        # request the sellerdash as before but this time expecting something
+        # login our shopkeeper
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+
+        # request to see seller dashboard
+        response = c.get("/sellerDash")
+
+        # expect a rendering / 200 OK response
+        self.assertEqual(response.status_code, 200)
+
+        # expect one order
+        self.assertContains(response, product.title)
+        self.assertContains(response, int("1"))
+
+        # expect no "not found any products" message
+        self.assertNotContains(
+            response, "You currently do not have any orders")
+
+    def test_one_product(self):
+        """
+        do not expect a product to exist
+
+        create a proper product
+        check if it exists
+        """
+        product = Product.objects.filter(title="Bottles!")
+        self.assertEqual(len(product), 0)
+
+        # create seller
+        seller = User.objects.create_user(
+            "barry", "barry@gmail.com", "bar", is_shopkeeper=True)
+
+        # create profile linked to seller
+        profile = Profile.objects.create(
+            shopkeeper=seller, name="bar's shop 1", bio="my shop!",
+            location="bar street", how_active=2, identification="1234567890qwr"
+        )
+
+        # NOW TO CREATE PRODUCT
+        # SIGN IN OUR SHOPKEEPER
+        c.login(username="barry",
+                password="bar")
+
+        # MAKE A REQUEST TO CREATEPRODUCT PAGE AND CREATE A PRODUCT
+        response = c.post("/createProduct", {
+            "seller": profile,
+            "title": "Bottles!",
+            "short_desc": "shorty",
+            "long_desc": "longy story shorty",
+            "category": "ACC",
+            "price": 24,
+            "in_stock": True
+        })
+
+        # EXPECT RESPONSE STATUS_CODE
+        self.assertEqual(response.status_code, 200)
+
+        # EXPECT TO SEE PRODUCT
+        product = Product.objects.filter(title="Bottles!")
+        self.assertEqual(len(product), 1)
+
+    def test_duplicate_product(self):
+        """
+        create a duplicate product
+        do not expect it to exist
+        expect an error
+        """
+        # create seller
+        seller = User.objects.create_user(
+            "bazzzy", "bazzzy@gmail.com", "fwooz", is_shopkeeper=True)
+
+        # create profile linked to seller
+        profile = Profile.objects.create(
+            shopkeeper=seller, name="bar's shop 3", bio="my shop!!!",
+            location="bar street", how_active=2, identification="1234567890qwy"
+        )
+
+        # SIGN IN OUR SHOPKEEPER
+        c.login(username="bazzzy",
+                password="fwooz")
+
+        # MAKE A REQUEST TO CREATEPRODUCT PAGE AND CREATE A PRODUCT
+        response = c.post("/createProduct", {
+            "seller": profile,
+            "title": "Cap!",
+            "short_desc": "shorty",
+            "long_desc": "longy story shorty",
+            "category": "ACC",
+            "price": 24,
+            "in_stock": True
+        })
+
+        # EXPECT RESPONSE STATUS_CODE
+        self.assertEqual(response.status_code, 200)
+
+        # EXPECT TO SEE PRODUCT
+        product = Product.objects.filter(title="Cap!")
+        self.assertEqual(len(product), 1)
+
+        # REQUEST AGAIN
+        response = c.post("/createProduct", {
+            "seller": profile,
+            "title": "Cap!",
+            "short_desc": "shorty",
+            "long_desc": "longy story shorty",
+            "category": "ACC",
+            "price": 24,
+            "in_stock": True
+        })
+        self.assertContains(
+            response, "Product with this Title already exists.")
+        self.assertEqual(response.status_code, 200)
+
+    def test_orderInfo_view(self):
+        """
+        orderInfo for a seller to see and act on orders by buyers
+        create an order for a certain seller
+        login as that seller
+        check for orders
+
+        test action on those orders
+            just assert status_codes and certain phrases in those pages or expect certain phrase to not be there
+        """
+        buyerAcc = User.objects.get(username=self.buyerDict["username"])
+        sellerAcc = User.objects.get(username=self.sellerDict["username"])
+        profileAcc = Profile.objects.get(shopkeeper=sellerAcc)
+        product = Product.objects.get(title=self.product1Dict["title"])
+
+        # assert that the order exists
+        orders = delivery_info.objects.filter(
+            seller=profileAcc,
+            item=product,
+            amount_of_item=1
+        )
+        self.assertEqual(len(orders), 1)
+
+        # login our shopkeeper
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+
+        # act on the order
+        # view it first
+        response = c.post(f"/orderInfo{orders.first().pk}view")
+
+        # expect to see the page
+        self.assertContains(response, orders.first().item.title)
+        self.assertEqual(response.status_code, 200)
+
+    def test_orderInfo_process(self):
+        sellerAcc = User.objects.get(username=self.sellerDict["username"])
+        profileAcc = Profile.objects.get(shopkeeper=sellerAcc)
+        product = Product.objects.get(title=self.product1Dict["title"])
+
+        orders = delivery_info.objects.filter(
+            seller=profileAcc,
+            item=product,
+            amount_of_item=1
+        )
+        # PROCESS
+        response = c.post(f"/orderInfo{orders.first().pk}process")
+
+        # expect to see the page
+        self.assertContains(
+            response, "Item in process or has been completed.")
+        self.assertEqual(response.status_code, 200)
+
+        # expect database to say the same
+        self.assertTrue(orders.first().processed)
+
+    def test_orderInfo_deliver(self):
+        sellerAcc = User.objects.get(username=self.sellerDict["username"])
+        profileAcc = Profile.objects.get(shopkeeper=sellerAcc)
+        product = Product.objects.get(title=self.product1Dict["title"])
+
+        orders = delivery_info.objects.filter(
+            seller=profileAcc,
+            item=product,
+            amount_of_item=1
+        )
+        # DELIVER
+        response = c.post(f"/orderInfo{orders.first().pk}delivered")
+
+        # expect to see the page
+        self.assertContains(
+            response, "Item has been delivered.")
+        self.assertEqual(response.status_code, 200)
+
+        # expect the database to say the same
+        self.assertTrue(orders.first().delivered)
+
+    def test_orderInfo_delete(self):
+        sellerAcc = User.objects.get(username=self.sellerDict["username"])
+        profileAcc = Profile.objects.get(shopkeeper=sellerAcc)
+        product = Product.objects.get(title=self.product1Dict["title"])
+
+        orders = delivery_info.objects.filter(
+            seller=profileAcc,
+            item=product,
+            amount_of_item=1
+        )
+        # DELETE
+        response = c.post(f"/orderInfo{orders.first().pk}delete")
+
+        # expect the database to not find the info
+        self.assertEqual(len(orders), 0)
+
+    def test_editProducts(self):
+        """
+        editProduct for seller to edit existing products                
+        expect certain response and check the product for changes
+        """
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+        formerProductTitle = product.title
+
+        # login user
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+
+        # edit the product
+        # required fields
+        # title, short_desc, long_desc, price
+        # change title through request/response
+        response = c.post(f"/editProduct{product.pk}edit", {
+            "title": "Changed this title",
+            "short_desc": product.short_desc,
+            "long_desc": product.long_desc,
+            "category": product.category,
+            "price": product.price
+        })
+        # send and check response
+        """  print(response)
+        print("---------------------------------------")
+        print(response.content)
+        print("---------------------------------------")
+        print() """
+        # make sure that we are rendered the product page after successful editing
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, "mySolar/product.html")
+
+        # make sure the product has been edited successfully by checking the fields that were edited
+        self.assertContains(response, "Changed this title")
+
+        # assert the product exists
+        # and make sure there are no duplicates!
+        newProduct = Product.objects.filter(title="Changed this title")
+        self.assertEqual(len(newProduct), 1)
+
+        # assert the other product does not exist
+        # and make sure there are no duplicates!
+        oldProduct = Product.objects.filter(title=formerProductTitle)
+        self.assertEqual(len(oldProduct), 0)
+
+        # make sure that when it is deleted, it ceases to exist, forever
+        # send request
+        response = c.post(f"/editProduct{newProduct.first().pk}delete")
+        # check product database for out product
+        newProduct = Product.objects.filter(title="Changed this title")
+        self.assertEqual(len(newProduct), 0)
+
+    def editProductsRequiredFields(self, form_error, field, infomation=None):
+        """ test that all expected fields are required / filled in """
+        """
+        for infomation:
+            info will be like this:
+                {field: value.
+                field2: value}
+
+            so we just substitute whatever has been given eg:
+                {title: "value"}
+        """
+        if infomation == None:
+            infomation = {}
+        # form_error is the error expected
+        # field is the name of the field being tested, and that will be sent to the function, eg title
+        # infomation is the infomation that must be supplied, eg fields
+
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+
+        # login user
+        c.login(username=self.sellerDict["username"],
+                password=self.sellerDict["password"])
+
+        # test for field error
+        response = self.client.post(
+            f"/editProduct{product.pk}edit", infomation)
+
+        self.assertFormError(
+            response, 'form', field, form_error)
+
+        # Where "form" is the context variable name for your form, "something" is the field name,
+        # and "This field is required." is the exact text of the expected validation error.
+
+    def test_editProductsTitleField(self):
+        """ test the title field in the editProducts form """
+        # template function: editProductsRequiredFields(self, form_error, field, infomation)
+
+        # it must be present (it is required)
+        # no infomation is given meaning that we give an empty post request without the title info
+        UserTestCase.editProductsRequiredFields(
+            self, "This field is required.", "title", {})
+
+        # and it must be unique
+        # edit the title of the product to be the the same as it is now and submit
+
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+
+        infomation = {"title": product.title, }
+
+        # get the product and give that title
+        self.editProductsRequiredFields(
+            "Product with this Title already exists.", "title", infomation)
+
+        # get another product
+        anotherProduct = Product.objects.filter(seller=seller).last()
+
+        # get another product and give that title (it must not only be unique by its own title but by the title of other products)
+        self.editProductsRequiredFields("Product with this Title already exists.", "title", {
+                                        "title": anotherProduct.title})
+
+    # next is to copy paste most of the function, changing some fields to 'fit' the needs of the different fields. Test only the required fields, declared somewhere up there, and don't forget that for unique fields, test that they both are not the same as the previous title and also another product!

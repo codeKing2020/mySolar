@@ -56,7 +56,8 @@ class createProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        exclude = ("is_closed", "in_stock", "seller")
+        # I removed is_closed here, it might be a problem later...
+        exclude = ("in_stock", "seller")
         labels = {
             "pic": "Picture of Item"
         }

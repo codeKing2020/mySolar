@@ -321,9 +321,9 @@ def createProduct(request):
                 product_form.save()
                 # redirect to product page
                 return product(request, product_form.instance.pk)
-        else:
-            product_form = createProductForm()
-            return render(request, "mySolar/newProduct.html", {"product_form": product_form})
+            else:
+                product_form = createProductForm(request.POST)
+                return render(request, "mySolar/newProduct.html", {"product_form": product_form})
     else:
         return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
 
