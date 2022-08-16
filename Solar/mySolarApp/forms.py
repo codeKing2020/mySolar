@@ -4,6 +4,11 @@ from .models import *
 
 class userProfileForm(forms.ModelForm):
     """Form for changing User values"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].required = True
+
     class Meta:
         model = User
         exclude = (
@@ -16,6 +21,7 @@ class userProfileForm(forms.ModelForm):
 
 class sellerProfileForm(forms.ModelForm):
     """Form for changing seller info"""
+
     class Meta:
         model = Profile
         exclude = ("shopkeeper",)

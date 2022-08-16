@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+
+User._meta.get_field('email')._unique = True
 
 # Create your models here.
 
@@ -25,6 +28,8 @@ class User(AbstractUser):
     beSellerFormSubmitted = models.BooleanField(default=False)
     contact_info = models.CharField(max_length=15, blank=True)
     is_shopkeeper = models.BooleanField(default=False)
+
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return f'{self.username}: shopkeeper: {self.is_shopkeeper} email: {self.email}'

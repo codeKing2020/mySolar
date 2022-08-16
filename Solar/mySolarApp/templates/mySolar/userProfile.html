@@ -5,7 +5,8 @@
     <h1 class="bg-info w-100 text-white mb-0 p-4">Profile</h1>
     <h3 class="text-white bg-primary mt-0 p-2">Your Personal infomation</h3>
     <a href="{% url 'password_change' %}" class="my-1 btn btn-outline-secondary btn-lg w-75">Change Password</a>
-    <form action="{% url 'sellerProfile' %}" method="post">
+    <form action="{% url 'userProfile' %}" method="post">
+        {% csrf_token %}
         {{userForm}}
         {% if shopkeeperForm %}
         <h3 class="text-white bg-secondary p-2">Your shop's infomation</h3>

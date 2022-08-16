@@ -396,53 +396,85 @@ def editProduct(request, productPK, productAction):
         productObject.delete()
         return sellerProducts(request, productObject.seller.pk)
 
+# fix seller profile!
+# needs a way to update model!
+# start from line 433
+
 
 @login_required
-def sellerProfile(request):
+def userProfile(request):
     # if get request
-    # create form out of user instance
-    # create form out of profile instance
-    # serve out
-    # else if post request
-    # process it
-    # update/save
-    # recurse (call function again but this time being a get request)
     if request.method == "GET":
+        # if shopkeeper
         if request.user.is_shopkeeper:
-            shopkeeperObject = Profile.objects.get(
-                shopkeeper=request.user)
+            shopkeeperObject = Profile.objects.get(shopkeeper=request.user)
+            # create form out of profile instance
             shopkeeperForm = sellerProfileForm(instance=shopkeeperObject)
+
             userObject = User.objects.get(pk=request.user.pk)
+            # create form out of user instance
             userForm = userProfileForm(instance=userObject)
+            # serve out
             context = {
                 "userForm": userForm,
                 "shopkeeperForm": shopkeeperForm
             }
             return render(request, "mySolar/userProfile.html", context)
-        elif request.user.is_shopkeeper == False:
+        # else they're a buyer or admin
+        elif request.user.is_shopkeeper == False or request.user.is_super:
+            # get user info
             userObject = User.objects.get(pk=request.user.pk)
+            # create form out of user instance
             userForm = userProfileForm(instance=userObject)
+            # serve out
             context = {
                 "userForm": userForm,
             }
             return render(request, "mySolar/userProfile.html", context)
-        else:
-            return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
     else:
+        # else if post request
         if request.user.is_shopkeeper:
-            user_profile_form = userProfileForm(request.POST)
-            shopkeeper_profile_form = sellerProfileForm(request.POST)
+            userObject = User.objects.get(pk=request.user.pk)
+            shopkeeperObject = Profile.objects.get(shopkeeper=request.user)
+            # process it
+            user_profile_form = userProfileForm(
+                request.POST)
+            shopkeeper_profile_form = sellerProfileForm(
+                request.POST)
+            # if valid
             if user_profile_form.is_valid() and shopkeeper_profile_form.is_valid():
-                # don't forget to add user info!
-                return HttpResponse(f"valid! {user_profile_form} and {shopkeeper_profile_form}")
+                user_profile_form = userProfileForm(
+                    request.POST, instance=userObject)
+                shopkeeper_profile_form = sellerProfileForm(
+                    request.POST, instance=shopkeeperObject)
+                # update
+                # update the fields
+                user_profile_form.save()
+                shopkeeper_profile_form.save()
+                # return profile info page
+                return redirect(reverse("userProfile"))
+            # else there was an error
             else:
+                # return with error info
                 return render(request, "mySolar/userProfile.html", {"userForm": user_profile_form, "shopkeeperForm": shopkeeper_profile_form})
-        elif request.user.is_shopkeeper == False:
-            user_profile_form = userProfileForm(request.POST)
+        # else they're a buyer or admin and not a seller/shopkeeper
+        elif request.user.is_shopkeeper == False or request.user.is_super:
+            # get user Object
+            userObject = User.objects.get(pk=request.user.pk)
+            # process form
+            user_profile_form = userProfileForm(
+                request.POST)
+            # if valid
             if user_profile_form.is_valid():
-                # don't forget to add user info!
-                return HttpResponse(f"valid! {user_profile_form}")
+                user_profile_form = userProfileForm(
+                    request.POST, instance=userObject)
+                # update
+                user_profile_form.save()
+                # return to profile
+                return redirect(reverse("userProfile"))
+            # else there was an error
             else:
+                # return with error info
                 return render(request, "mySolar/userProfile.html", {"userForm": user_profile_form})
 
 

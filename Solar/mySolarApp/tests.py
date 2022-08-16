@@ -859,7 +859,7 @@ class UserTestCase(TestCase):
         newProduct = Product.objects.filter(title="Changed this title")
         self.assertEqual(len(newProduct), 0)
 
-    def editProductsRequiredFields(self, form_error, field, infomation=None):
+    def editProductsRequiredFields(self, form_error, field, infomation):
         """ test that all expected fields are required / filled in """
         """
         for infomation:
@@ -870,8 +870,8 @@ class UserTestCase(TestCase):
             so we just substitute whatever has been given eg:
                 {title: "value"}
         """
-        if infomation == None:
-            infomation = {}
+        """ if infomation == None:
+            infomation = {} """
         # form_error is the error expected
         # field is the name of the field being tested, and that will be sent to the function, eg title
         # infomation is the infomation that must be supplied, eg fields
@@ -886,7 +886,7 @@ class UserTestCase(TestCase):
                 password=self.sellerDict["password"])
 
         # test for field error
-        response = self.client.post(
+        response = c.post(
             f"/editProduct{product.pk}edit", infomation)
 
         self.assertFormError(
@@ -895,7 +895,12 @@ class UserTestCase(TestCase):
         # Where "form" is the context variable name for your form, "something" is the field name,
         # and "This field is required." is the exact text of the expected validation error.
 
-    def test_editProductsTitleField(self):
+        # assert that product hasn't changed
+        newProduct = Product.objects.filter(seller=seller).first()
+
+        self.assertEqual(product, newProduct)
+
+    def test_editProducts_titleField(self):
         """ test the title field in the editProducts form """
         # template function: editProductsRequiredFields(self, form_error, field, infomation)
 
@@ -926,3 +931,55 @@ class UserTestCase(TestCase):
                                         "title": anotherProduct.title})
 
     # next is to copy paste most of the function, changing some fields to 'fit' the needs of the different fields. Test only the required fields, declared somewhere up there, and don't forget that for unique fields, test that they both are not the same as the previous title and also another product!
+    # required fields: title, short_desc, long_desc, price
+
+    def test_editProducts_shortDescField(self):
+        """ test the title field in the editProducts form """
+        # template function: editProductsRequiredFields(self, form_error, field, infomation)
+
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+
+        # it must be present (it is required)
+        infomation = {
+            "title": product.title,
+        }
+        UserTestCase.editProductsRequiredFields(
+            self, "This field is required.", "short_desc", infomation)
+
+    def test_editProducts_longDescField(self):
+        """ test the title field in the editProducts form """
+        # template function: editProductsRequiredFields(self, form_error, field, infomation)
+
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+
+        # it must be present (it is required)
+        infomation = {
+            "title": product.title,
+            "short_desc": product.short_desc,
+        }
+        UserTestCase.editProductsRequiredFields(
+            self, "This field is required.", "long_desc", infomation)
+
+    def test_editProducts_priceField(self):
+        """ test the title field in the editProducts form """
+        # template function: editProductsRequiredFields(self, form_error, field, infomation)
+
+        # get our seller
+        seller = Profile.objects.get(name=self.profileDict["name"])
+        # get a product
+        product = Product.objects.filter(seller=seller).first()
+
+        # it must be present (it is required)
+        infomation = {
+            "title": product.title,
+            "short_desc": product.short_desc,
+            "long_desc": product.long_desc
+        }
+        UserTestCase.editProductsRequiredFields(
+            self, "This field is required.", "price", infomation)
