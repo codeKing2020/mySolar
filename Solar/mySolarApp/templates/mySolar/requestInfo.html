@@ -1,0 +1,55 @@
+{% extends 'mySolar/dashLayout.html' %}
+
+{% block title %}
+request Info
+{% endblock %}
+
+{% block body %}
+<table class="table table-striped-columns p-5 mt-2 table-bordered">
+    <thead>
+        <tr class="bg-primary">
+            <th scope="col" class="text-white">Heading</th>
+            <th scope="col" class="text-white">Information</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Request Number:</b></td>
+            <td>{{ requestInfo.pk }}</td>
+        </tr>
+
+        <tr>
+            <td><b>First Name of Seller:</b></td>
+            <td>{{requestInfo.sellerFName}}</td>
+        </tr>
+
+        <tr>
+            <td><b>Last Name of Seller:</b></td>
+            <td>{{requestInfo.sellerLName}}</td>
+        </tr>
+
+        <tr>
+            <td><b>Business Name:</b></td>
+            <td>{{requestInfo.name}}</td>
+        </tr>
+
+        <tr>
+            <td><b>Business Email:</b></td>
+            <td>{{requestInfo.businessEmail}}</td>
+        </tr>
+
+        <tr>
+            <td><b>Business contact number:</b></td>
+            <td>{{requestInfo.businessContact}}</td>
+        </tr>
+
+        <tr>
+            <td><b>Location of business:</b></td>
+            <td>{{requestInfo.location}}</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<a href="{% url 'requestAction' 'delete' requestInfo.pk %}" class="btn btn-outline-danger btn-lg btn-block">Delete</a>
+<a href="{% url 'requestAction' 'pass' requestInfo.pk %}" class="btn btn-outline-success btn-lg btn-block">Pass</a>
+{% endblock %}
