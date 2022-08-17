@@ -250,8 +250,59 @@ def requestsAndQuestions(request):
         return render(request, "mySolar/fail.html", {'message': "You are not permitted here."})
     else:
         requests = sellerRequests.objects.all()
-        QUESTIONS = userQuestions.objects.all()
-        return render(request, "mySolar/requestsAndQuestions.html", {"requests": requests, "questions": QUESTIONS})
+        questions = userQuestions.objects.all()
+        return render(request, "mySolar/requestsAndQuestions.html", {"requests": requests, "questions": questions})
+
+
+@login_required
+def requestAction(request, action, requestPK):
+    # take a request and do something with it
+    # either delete, view, or pass as a seller
+    # view
+    if action == "view":
+        # get the request from the database through the requestPK
+        requestInfo = get_object_or_404(sellerRequests, pk=requestPK)
+        # serve out
+        return render(request, "mySolar/requestInfo.html", {"requestInfo": requestInfo})
+
+    # delete
+    elif action == "delete":
+        # get request from the database through the requestPK
+        requestInfo = get_object_or_404(sellerRequests, pk=requestPK)
+        requestInfo.delete()
+
+        # return requestsAndQuestions page
+        return requestsAndQuestions(request)
+
+    # pass as seller
+    elif action == "pass":
+        # get request from the database through the requestPK
+        requestInfo = get_object_or_404(sellerRequests, pk=requestPK)
+
+        # take info from the model field and input into other models
+        # update user field
+        userAcc = User.objects.get(pk=requestInfo.sellerAcc.pk)
+        userAcc.first_name = requestInfo.sellerFName
+        userAcc.last_name = requestInfo.sellerLName
+        userAcc.is_shopkeeper = True
+
+        # save
+        userAcc.save()
+
+        # create new Profile
+        profileAcc = Profile.objects.create(
+            shopkeeper=userAcc,
+            name=requestInfo.name,
+            businessEmail=requestInfo.businessEmail,
+            businessNumber=requestInfo.businessContact,
+            bio=requestInfo.bio,
+            location=requestInfo.location,
+            how_active=requestInfo.how_active,
+            identification=requestInfo.identification
+        )
+
+        # redirect to profile info
+        return sellerInfo(request, profileAcc.pk)
 
 
 def categoryProducts(request):

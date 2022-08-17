@@ -4,13 +4,16 @@
 requests and questions
 {% endblock %}
 
+{% load static %}
+
 {% block body %}
-<div>
-    <button class="btn btn-outline-primary d-block mx-auto text-center d-inline">requests</button>
-    <button class="btn btn-outline-primary d-block mx-auto text-center d-inline">questions</button>
+<div class="row m-3 p-2">
+    <button class="btn btn-outline-primary d-block mx-auto text-center d-inline mx-1" id="requestsBTN">requests</button>
+    <button class="btn btn-outline-secondary d-block mx-auto text-center d-inline mx-1"
+        id="questionsBTN">questions</button>
 </div>
 
-<div class="requests">
+<div id="requests">
     <table class="table table-hover table-dark">
         <thead>
             <tr>
@@ -20,23 +23,25 @@ requests and questions
                 <th scope="col">Business Name</th>
                 <th scope="col">Business Email</th>
                 <th scope="col">Business Location</th>
+                <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
             {% for seller in requests %}
             <tr>
-                <th scope="row">{{ seller.pk }}</th>
-                <td>{{seller.sellerFName}}</td>
-                <td>{{seller.sellerLName}}</td>
-                <td>{{seller.name}}</td>
-                <td>{{seller.businessEmail}}</td>
-                <td>{{seller.location}}</td>
+                <th scope="row" class="text-break">{{ seller.pk }}</th>
+                <td class="text-break">{{seller.sellerFName}}</td>
+                <td class="text-break">{{seller.sellerLName}}</td>
+                <td class="text-break">{{seller.name}}</td>
+                <td class="text-break">{{seller.businessEmail}}</td>
+                <td class="text-break">{{seller.location}}</td>
+                <td><a href="{% url 'requestAction' 'view' seller.pk %}" class="btn btn-outline-light">View</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<div class="questions">
+<div id="questions">
     <table class="table table-hover">
         <thead>
             <tr>

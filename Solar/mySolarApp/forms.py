@@ -47,8 +47,6 @@ class SellerRequestForm(forms.ModelForm):
             "businessContact": "Business contact info",
             "name": "Name of Company",
             "location": "Location of Company",
-            "profile_pic": "Profile Picture",
-            "banner_pic": "Banner Picture",
             "how_active": "How active will you be each week?",
             "identification": "Identification number"
         }

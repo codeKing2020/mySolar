@@ -26,7 +26,6 @@ class User(AbstractUser):
         including info about getting full name or changing password etc
     """
     beSellerFormSubmitted = models.BooleanField(default=False)
-    contact_info = models.CharField(max_length=15, blank=True)
     is_shopkeeper = models.BooleanField(default=False)
 
     REQUIRED_FIELDS = ['email']
@@ -50,6 +49,8 @@ class Profile(models.Model):
     shopkeeper = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="user_profile")
     name = models.CharField(max_length=64, unique=True)
+    businessEmail = models.EmailField(unique=True)
+    businessNumber = models.CharField(max_length=13)
     bio = models.CharField(max_length=1000)
     location = models.CharField(max_length=128)
     how_active = models.IntegerField()
@@ -158,6 +159,7 @@ class sellerRequests(models.Model):
     location = models.CharField(max_length=128, blank=False)
     bio = models.CharField(max_length=1000, blank=False)
     identification = models.CharField(max_length=13, unique=True, blank=False)
+    how_active = models.IntegerField()
 
 
 class userQuestions(models.Model):

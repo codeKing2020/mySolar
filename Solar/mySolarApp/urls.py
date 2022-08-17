@@ -29,5 +29,7 @@ urlpatterns = [
     path('newProduct', createProduct, name="newProduct"),
     path("userProfile", userProfile, name="userProfile"),
     path("delAcc", delAcc, name="delAcc"),
-    path("areYouSure", areYouSure, name="areYouSure")
+    path("areYouSure", areYouSure, name="areYouSure"),
+    path("requestAction/<str:action>/<int:requestPK>",
+         requestAction, name="requestAction")
 ]
