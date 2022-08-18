@@ -135,7 +135,7 @@ class delivery_info(models.Model):
         User, on_delete=models.CASCADE, related_name="customer_deliveryInfo")
     delivery_date = models.DateTimeField(verbose_name=(
         "Delivery Date"), auto_now_add=False, null=False, blank=False)
-    location = models.CharField(max_length=128)
+    location = models.CharField(max_length=128, blank=False, null=False)
     processed = models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
     payment_method = models.CharField(

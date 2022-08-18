@@ -96,3 +96,10 @@ class categoryProductsForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = {"category"}
+
+
+class delivery_infoForm(forms.ModelForm):
+    class Meta:
+        model = delivery_info
+        exclude = ('seller', 'item', 'customer', 'processed',
+                   'delivered', 'payment_method', 'closed')

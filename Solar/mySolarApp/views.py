@@ -1,4 +1,4 @@
-import re
+from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
@@ -132,14 +132,18 @@ def shop(request):
             "categoryForm": categoryForm
         }
     else:
-        context = {"products": "None"}
+        context = {
+            "products": "None"
+        }
     return render(request, "mySolar/store.html", context)
 
 
 def product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
+    productForm = delivery_infoForm()
     context = {
-        "product": product
+        "product": product,
+        "productForm": productForm
     }
     return render(request, "mySolar/product.html", context)
 
@@ -170,6 +174,10 @@ def sellerProducts(request, seller_id):
 
 
 def success(request):
+    # success is when you attain and get what you wanted, after all that you have done
+    # all the dreaming, scheming, plotting, working, crying, lifting, dropping, it'll all be worth it
+    # because no mediocre man has ever been remembered in or will ever in the books of time, only the greats
+    # the greats who are successful, high achievers, like YOU
     return render(request, "mySolar/success.html")
 
 
@@ -543,3 +551,46 @@ def delAcc(request):
 @login_required
 def areYouSure(request):
     return render(request, "mySolar/areYouSure.html")
+
+
+@login_required
+def orderProduct(request, productPK):
+    # take what was given and process it
+    order = delivery_infoForm(request.POST)
+
+    # get product
+    product = get_object_or_404(Product, pk=productPK)
+
+    if order.is_valid():
+        # take cleaned data and experiment more with it
+        # if there is an error return context with error_message
+        amount_of_item = order.cleaned_data['amount_of_item']
+        delivery_date = order.cleaned_data['delivery_date']
+        location = order.cleaned_data['location']
+
+        # ensure amount is greater than or equal to 1
+        if amount_of_item <= 0:
+            context = {
+                "product": product,
+                "productForm": order,
+                "error_message": "The amount must be greater than or equal to 1"
+            }
+            return render(request, "mySolar/product.html", context)
+        # ensure delivery date is more than a day away and less than a year away
+        return HttpResponse("I'll be back...")
+    else:
+        context = {
+            "product": product,
+            "productForm": order
+        }
+        return render(request, "product.html", context)
+
+    # ensure that the date time provided must be more than one day ahead
+    # get the time now
+    # ensure that it is greater than one day
+    # else return an error saying it has to be greater than that
+    # ensure the amount is greater than or equal to 1
+
+    # if it passes all, save in delivery_info
+    # redirect to pending order page / info page where you're told that yeah it'll take some time, thanks for buying with us
+    # next up: dashboard for buyer and that's it

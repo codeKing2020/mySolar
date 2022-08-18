@@ -1,11 +1,17 @@
-{% extends 'mySolar/layout.html' %} {% load static %} {% block title %} More
-Info {% endblock %} {% block body %}
+{% extends 'mySolar/layout.html' %}
+{% load static %}
+
+{% block title %}
+More Info
+{% endblock %}
+
+{% block body %}
 <div class="d-md-flex flex-md-row justify-content-md-around align-items-center mt-2">
   <section class="img-section float-md-start">
     {% if product.pic %}
     <img src="{% static '{{product.pic}}' %}" class="img-fluid flex-fill" alt="..." />
     {% else %}
-    <img src="{% static 'respect1000.jpg' %}" class="img-fluid flex-fill" alt="..." />
+    <img src="{% static 'respect1000.jpg' %}" class="img-fluid w-100 h-100 flex-fill" alt="..." />
     {% endif %}
   </section>
   <div class="productDivider"></div>
@@ -22,8 +28,28 @@ Info {% endblock %} {% block body %}
     <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
       <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
       {% else %}
-      <button class="btn btn-outline-success">Buy</button>
-      <button class="btn btn-outline-primary">Add to cart</button>
+      <!-- <form action="{% url 'orderProduct' product.pk %}" method="post" class="form text-left">
+        {% csrf_token %}
+        <label for="dateTimeInput" class="form-label">Date and Time</label>
+        <input type="datetime-local" name="DateTime" id="dateTimeInput" class="form-control" required>
+        <label for="locationInput" class="form-label">Location:</label>
+        <input type="text" name="location" id="locationInput" class="form-control" required>
+        <label for="amountInput" class="form-label">Amount of product</label>
+        <input type="number" name="amount" id="amountInput" class="form-control" required>
+        <div class="text-center">
+          <input type="submit" value="Order item" class="btn btn-success">
+        </div>
+      </form> -->
+      <form action="{% url 'orderProduct' product.pk  %}" method="post" class="form text-center border p-3">
+        {% csrf_token %}
+        {% if error_message %}
+        <div class="bg-danger text-white text-center p-2 m-2">
+          {{error_message}}
+        </div>
+        {% endif %}
+        {{productForm}}
+        <input type="submit" value="Order item" class="btn btn-success">
+      </form>
   </section>
 </div>
 {% endif %} {% endblock %}

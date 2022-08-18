@@ -31,5 +31,7 @@ urlpatterns = [
     path("delAcc", delAcc, name="delAcc"),
     path("areYouSure", areYouSure, name="areYouSure"),
     path("requestAction/<str:action>/<int:requestPK>",
-         requestAction, name="requestAction")
+         requestAction, name="requestAction"),
+    path("orderProduct/<int:productPK>",
+         orderProduct, name="orderProduct")
 ]
