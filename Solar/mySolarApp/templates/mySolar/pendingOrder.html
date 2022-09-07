@@ -1,0 +1,17 @@
+{% extends "mySolar/layout.html" %}
+
+{% block title %}
+Thank you for shopping with us!
+{% endblock%}
+
+{% block body %}
+<div class="border m-4 p-4 text-center">
+    <h1>Order has been set</h1>
+    <p>Your order is now pending and the seller will get in contact with you about your order. Thank you for shoppping
+        with us!</p>
+    <div class="d-flex flex-row justify-content-center">
+        <a href="{% url 'shop' %}" class="btn btn-primary p-1 m-1">Back to Store</a>
+        <a href="{% url 'buyerDash' %}" class="btn btn-secondary p-1 m-1">Go to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

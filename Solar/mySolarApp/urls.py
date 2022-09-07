@@ -21,6 +21,7 @@ urlpatterns = [
     path("sellerProducts<int:seller_id>",
          sellerProducts, name="sellerProducts"),
     path("categoryProducts", categoryProducts, name="categoryProducts"),
+    path("catProducts/<str:cat>", catProducts, name="catProducts"),
     path("sellerDash", sellerDash, name="sellerDash"),
     path('createProduct', createProduct, name="createProduct"),
     path("orderInfo<int:deliveryPK><str:action>", orderInfo, name="orderInfo"),
@@ -33,5 +34,6 @@ urlpatterns = [
     path("requestAction/<str:action>/<int:requestPK>",
          requestAction, name="requestAction"),
     path("orderProduct/<int:productPK>",
-         orderProduct, name="orderProduct")
+         orderProduct, name="orderProduct"),
+    path("buyerDash", buyerDash, name="buyerDash"),
 ]

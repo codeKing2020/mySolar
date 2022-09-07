@@ -36,6 +36,8 @@ requests and questions
                 <td class="text-break">{{seller.businessEmail}}</td>
                 <td class="text-break">{{seller.location}}</td>
                 <td><a href="{% url 'requestAction' 'view' seller.pk %}" class="btn btn-outline-light">View</a></td>
+                <td><a href="{% url 'requestAction' 'delete' seller.pk %}" class="btn btn-outline-light">Delete</a></td>
+                <td><a href="{% url 'requestAction' 'pass' seller.pk %}" class="btn btn-outline-light">Accept</a></td>
             </tr>
             {% endfor %}
         </tbody>

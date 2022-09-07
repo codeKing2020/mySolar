@@ -1,9 +1,58 @@
-{% extends 'mySolar/dashLayout.html' %}
+{% extends 'mySolar/dashLayout.html' %} {% block title %} Seller Dashboard |
+mySolar {% endblock %} {% block body %}
+<div class="column container">
+    <!-- Show overall info, eg orders -->
+    <h1 class="mb-3">Hello {{ user.username }}</h1>
 
-{% block title %}
-Buyer Dashboard | mySolar
-{% endblock %}
+    <h2 class="mb-5">Your orders</h2>
+    {% if delivery_info == "empty" %}
+    <h3>You did not order anything, why not <a href="{% url 'shop' %}">look for something?</a></h3>
+    {% else %}
+    <div class="overflow-visible">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Delivery Date</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Customer contact info</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for del_info in delivery_info %} {% if del_info.delivered == False %}
+                <tr class="table-active">
+                    {% elif del_info.delivered == True %}
+                </tr>
 
-{% block body %}
-<h1>Hello Buyers!</h1>
+                <tr class="table-success">
+                    {% elif del_info.processed == True %}
+                </tr>
+
+                <tr class="table-info">
+                    {% endif %}
+                    <td>{{del_info.item.title}}</td>
+                    <td>{{del_info.amount_of_item}}</td>
+                    <td>{{del_info.delivery_date}}</td>
+                    <td>{{del_info.location}}</td>
+                    <td>{{del_info.payment_method}}</td>
+                    {% if del_info.customer.contact_info %}
+                    <td>{{del_info.customer.contact_info}}</td>
+                    {% else %}
+                    <td>{{del_info.customer.email}}</td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'view' %}">View</a>
+                        <a class="btn btn-outline-primary" href="{% url 'orderInfo' del_info.pk 'delete' %}">Delete</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+</div>
 {% endblock %}

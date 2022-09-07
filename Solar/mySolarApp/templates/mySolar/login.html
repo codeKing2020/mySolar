@@ -14,6 +14,7 @@
         {% endif %}
         <!-- http://127.0.0.1:8000/login?next=/beSeller -->
         <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
             {% if request.GET.next %}
             <input type="hidden" name="next" value="{{ request.GET.next }}" />
             {% endif %}

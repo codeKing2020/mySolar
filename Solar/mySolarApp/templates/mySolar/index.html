@@ -26,15 +26,22 @@ Welcome to MySolar | Home
                     system, extensive prebuilt components, and powerful JavaScript plugins.</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                     {% if request.user.is_authenticated == True %}
-                    <a href="{% url 'sellerDash' %}"><button type="button"
-                            class="btn btn-primary btn-lg px-4 me-md-2">Go
-                            to Dashboard</button></a>
-                    {% else %}
-                    <a href="{% url 'register' %}"><button type="button"
-                            class="btn btn-primary btn-lg px-4 me-md-2">Join</button></a>
-                    <a href="{% url 'login' %}"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Sign
-                            In</button></a>
-                    {% endif %}
+                    {% if request.user.is_shopkeeper %}
+                    <a href="{% url 'sellerDash' %}">
+                        {% else %}
+                        <a href="{% url 'buyerDash' %}">
+                            {% endif %}
+                            <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Go
+                                to Dashboard
+                            </button>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'register' %}"><button type="button"
+                                class="btn btn-primary btn-lg px-4 me-md-2">Join</button></a>
+                        <a href="{% url 'login' %}"><button type="button"
+                                class="btn btn-outline-secondary btn-lg px-4">Sign
+                                In</button></a>
+                        {% endif %}
                 </div>
             </div>
         </div>

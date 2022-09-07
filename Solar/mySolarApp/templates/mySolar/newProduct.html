@@ -5,9 +5,15 @@ Create a new product | mySolar
 {% endblock %}
 
 {% block body %}
-<form action="{% url 'newProduct' %}" method="POST" class="form w-100 container-fluid">
-    {% csrf_token %}
-    {{product_form.as_p}}
-    <input type="submit" value="Create!" class="btn btn-success fs-3 w-25 rounded">
-</form>
+<div class="text-center m-3 border rounded border-top-0">
+    <div class="p-2 bg-primary text-white">
+        <h1>Create a new product</h1>
+        <p>Please fill out the form below.</p>
+    </div>
+    <form action="{% url 'newProduct' %}" method="POST" class="form w-100 container-fluid py-3">
+        {% csrf_token %}
+        {{product_form.as_p}}
+        <input type="submit" value="Create!" class="btn btn-success fs-3 w-25 rounded">
+    </form>
+</div>
 {% endblock %}

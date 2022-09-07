@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
@@ -143,7 +143,7 @@ def product(request, product_id):
     productForm = delivery_infoForm()
     context = {
         "product": product,
-        "productForm": productForm
+        "productForm": productForm,
     }
     return render(request, "mySolar/product.html", context)
 
@@ -167,9 +167,14 @@ def sellerProducts(request, seller_id):
         seller = user.user_profile
         sellerProducts = Product.objects.filter(
             seller=seller.pk)
-    context = {
-        "products": sellerProducts
-    }
+    if len(sellerProducts) < 1:
+        context = {
+            "products": "None"
+        }
+    else:
+        context = {
+            "products": sellerProducts
+        }
     return render(request, "mySolar/store.html", context)
 
 
@@ -313,6 +318,19 @@ def requestAction(request, action, requestPK):
         return sellerInfo(request, profileAcc.pk)
 
 
+def catProducts(request, cat):
+    products = Product.objects.filter(category=cat)
+    category_form = categoryProductsForm()
+    if len(products) < 1:
+        products = "None"
+    context = {
+        "categoryForm": category_form,
+        "products": products
+    }
+    # render with those products
+    return render(request, 'mySolar/store.html', context)
+
+
 def categoryProducts(request):
     if request.method == 'POST':
         # process form
@@ -383,21 +401,25 @@ def createProduct(request):
             else:
                 product_form = createProductForm(request.POST)
                 return render(request, "mySolar/newProduct.html", {"product_form": product_form})
+        else:
+            product_form = createProductForm()
+            return render(request, "mySolar/newProduct.html", {"product_form": product_form})
     else:
         return render(request, "mySolar/fail.html", {"message": "You are not authorized to be on this page."})
 
 
+@login_required
 def orderInfo(request, deliveryPK, action):
     if action == "view":
         # search up delivery info
         # send to page with info
-        info = delivery_info.objects.get(pk=deliveryPK)
+        info = get_object_or_404(delivery_info, pk=deliveryPK)
         return render(request, "mySolar/orderInfo.html", {"info": info})
     elif action == "process":
         # search up delivery info
         # alt info
         # send to page with info
-        info = delivery_info.objects.get(pk=deliveryPK)
+        info = get_object_or_404(delivery_info, pk=deliveryPK)
         info.processed = True
         info.save()
         return render(request, "mySolar/orderInfo.html", {"info": info})
@@ -406,18 +428,19 @@ def orderInfo(request, deliveryPK, action):
         # alt info
         # send to page with info
         orderInfo(request, deliveryPK, "process")
-        info = delivery_info.objects.get(pk=deliveryPK)
+        info = get_object_or_404(delivery_info, pk=deliveryPK)
         info.delivered = True
         info.save()
         return render(request, "mySolar/orderInfo.html", {"info": info})
     elif action == "delete":
         # search up delivery info
         # send to page with info
-        info = delivery_info.objects.get(pk=deliveryPK)
+        info = get_object_or_404(delivery_info, pk=deliveryPK)
         info.delete()
-        return sellerDash(request)
-    else:
-        return render(request, "mySolar/fail.html", {'message': "We don't know why you're here. <br> Seeing this page by mistake? Contact us! Go to the help page and submit a query."})
+        if request.user.is_shopkeeper:
+            return sellerDash(request)
+        else:
+            return buyerDash(request)
 
 
 def editProduct(request, productPK, productAction):
@@ -577,7 +600,35 @@ def orderProduct(request, productPK):
             }
             return render(request, "mySolar/product.html", context)
         # ensure delivery date is more than a day away and less than a year away
-        return HttpResponse("I'll be back...")
+        # remove one day from delivery_date
+        timeEntered = delivery_date - timedelta(days=1)
+        # ensure that value of days is more than one
+        if timeEntered.day <= datetime.now().day:
+            context = {
+                "product": product,
+                "productForm": order,
+                "error_message": "The delivery date must be at least more than a day away."
+            }
+            return render(request, "mySolar/product.html", context)
+
+        timeEntered = delivery_date - timedelta(days=364)
+        # after reducing date by one year (364 days), if the year value is still greater than the current year
+        if timeEntered.year >= datetime.now().year:
+            # there's an error
+            context = {
+                "product": product,
+                "productForm": order,
+                "error_message": "The delivery date must be less than a year away."
+            }
+            return render(request, "mySolar/product.html", context)
+
+        # if it passes all, save in delivery_info
+        delInfo = delivery_infoForm(request.POST)
+        delInfo.instance.customer = request.user
+        delInfo.instance.item = product
+        delInfo.instance.seller = product.seller
+        delInfo.save()
+        return render(request, "mySolar/pendingOrder.html")
     else:
         context = {
             "product": product,
@@ -585,12 +636,23 @@ def orderProduct(request, productPK):
         }
         return render(request, "product.html", context)
 
-    # ensure that the date time provided must be more than one day ahead
-    # get the time now
-    # ensure that it is greater than one day
-    # else return an error saying it has to be greater than that
-    # ensure the amount is greater than or equal to 1
 
-    # if it passes all, save in delivery_info
-    # redirect to pending order page / info page where you're told that yeah it'll take some time, thanks for buying with us
-    # next up: dashboard for buyer and that's it
+@login_required
+def buyerDash(request):
+    if request.user.is_shopkeeper == False:
+        # return info about the user
+        # return info about deliveries concerning the user themselves
+        user = User.objects.get(username=request.user.username)
+        delivery_items = delivery_info.objects.filter(customer=user)
+        if len(delivery_items) != 0:
+            context = {
+                "user": user,
+                "delivery_info": delivery_items
+            }
+        else:
+            context = {
+                "user": user,
+                "delivery_info": "empty"
+            }
+        return render(request, "mySolar/buyerDash.html", context)
+    return render(request, "mySolar/fail.html", {"message": "You are not authorized to enter this page."})

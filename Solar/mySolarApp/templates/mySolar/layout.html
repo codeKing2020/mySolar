@@ -83,8 +83,7 @@
           <li>
             <a href="{% url 'help' %}" class="nav-link px-2 text-white">Help</a>
           </li>
-          {% comment %}
-          <!-- <li><a href="{% url 'buyerDash' %}" class="nav-link px-2 text-white">Cart</a></li> -->{% endcomment %}
+          <li><a href="{% url 'buyerDash' %}" class="nav-link px-2 text-white">Dashboard</a></li>
         </ul>
 
         <div class="dropdown text-end">
@@ -96,9 +95,7 @@
             <li>
               <a class="dropdown-item" href="#">{{request.user.get_username}}</a>
             </li>
-            {% comment %}
-            <li><a class="dropdown-item" href="{% url '' %}">Profile</a></li>
-            {% endcomment %}
+            <li><a class="dropdown-item" href="{% url 'userProfile' %}">Profile</a></li>
             <li>
               <a class="dropdown-item green-text" href="{% url 'beSeller' %}">Become a seller</a>
             </li>
@@ -150,9 +147,7 @@
             <li>
               <a class="dropdown-item" href="#">{{request.user.get_username}}</a>
             </li>
-            {% comment %}
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            {% endcomment %}
+            <li><a class="dropdown-item" href="{% url 'userProfile' %}">Profile</a></li>
             <li>
               <a class="dropdown-item" href="{% url 'sellerProducts' request.user.pk %}">My Products</a>
             </li>
@@ -188,12 +183,6 @@
         <a href="/" class="nav-link px-2 text-muted">Home</a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link px-2 text-muted">Features</a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link px-2 text-muted">Pricing</a>
-      </li>
-      <li class="nav-item">
         <a href="{% url 'help' %}" class="nav-link px-2 text-muted">FAQs</a>
       </li>
       <li class="nav-item">
@@ -202,6 +191,6 @@
     </ul>
   </footer>
 </div>
-{{ request.user }}
+{{request.user}}
 
 </html>

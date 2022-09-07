@@ -22,24 +22,12 @@ More Info
       sold by
       <a href="{% url 'sellerInfo' product.seller.pk %}">{{product.seller.name}}</a>
     </p>
-    <p>In the {{product.category}} Category</p>
+    <p>In the <a href="{% url 'catProducts' product.category %}">{{product.get_category_display}}</a> Category</p>
     <p>{{product.long_desc}}</p>
     {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
     <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
       <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
       {% else %}
-      <!-- <form action="{% url 'orderProduct' product.pk %}" method="post" class="form text-left">
-        {% csrf_token %}
-        <label for="dateTimeInput" class="form-label">Date and Time</label>
-        <input type="datetime-local" name="DateTime" id="dateTimeInput" class="form-control" required>
-        <label for="locationInput" class="form-label">Location:</label>
-        <input type="text" name="location" id="locationInput" class="form-control" required>
-        <label for="amountInput" class="form-label">Amount of product</label>
-        <input type="number" name="amount" id="amountInput" class="form-control" required>
-        <div class="text-center">
-          <input type="submit" value="Order item" class="btn btn-success">
-        </div>
-      </form> -->
       <form action="{% url 'orderProduct' product.pk  %}" method="post" class="form text-center border p-3">
         {% csrf_token %}
         {% if error_message %}
@@ -50,6 +38,7 @@ More Info
         {{productForm}}
         <input type="submit" value="Order item" class="btn btn-success">
       </form>
+      {% endif %}
   </section>
 </div>
-{% endif %} {% endblock %}
+{% endblock %}
