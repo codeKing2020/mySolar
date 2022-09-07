@@ -2,6 +2,15 @@
   box-sizing: border-box;
 }
 
+#id_category {
+  width: 100%;
+  font-size: 18px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 6px;
+}
+
 input,
 textarea {
   font-size: .8rem;
