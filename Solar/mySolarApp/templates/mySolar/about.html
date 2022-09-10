@@ -1,12 +1,12 @@
-{% extends 'mySolar/layout.html' %} {% block title %} About {% endblock %} {%
-block body %}
+{% extends 'mySolar/layout.html' %} {% block title %} About {% endblock %}
+{%block body %}
 <div id="about-text">
-  <section class="img-area">
+  <section class="img-area text-center d-block mx-auto my-2">
     <figure class="figure">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="60"
-        height="60"
+        width="120"
+        height="120"
         fill="currentColor"
         class="bi bi-file-person"
         viewBox="0 0 16 16"
@@ -24,12 +24,12 @@ block body %}
   <section class="text-area container">
     <p>
       Hello! My name is Tavonga and I developed this site using Django and
-      bootstrap. I'm 16 and live in Harare, Zimbabwe. I seek to develop more
-      websites, that will be better than these, and also update and improve this
-      site more and more. This website, I hope, will help Zimbabwe and later on
-      SADC build a solar future since other websites do not offer the right
-      functionality to order and get solar and renewable energy products fast
-      and easy.
+      bootstrap. I live in Harare, Zimbabwe and seek to develop more websites
+      better than this one, and also update and improve this site more and more.
+      This website, I hope, will help Zimbabwe and later on SADC build a solar
+      future since other websites do not offer the right functionality to order
+      and get solar and renewable energy products fast and easy. Contact me for
+      any queries or questions you have.
     </p>
     <div class="d-block mx-auto text-center">
       <a href="{% url 'login' %}"

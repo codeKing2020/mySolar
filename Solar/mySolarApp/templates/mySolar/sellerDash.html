@@ -1,13 +1,18 @@
-{% extends 'mySolar/dashLayout.html' %} {% block title %} Seller Dashboard |
-mySolar {% endblock %} {% block body %}
+{% extends 'mySolar/dashLayout.html' %} 
+
+{% block title %} 
+Seller Dashboard | mySolar 
+{% endblock %} 
+
+{% block body %}
 <div class="column container">
   <!-- Show overall info, eg orders -->
   <h1 class="mb-3">Hello {{ user.username }}</h1>
 
-  <h2 class="mb-5">Your orders</h2>
-  {% if delivery_info == "empty" %}
+  <h2 class="mb-5 text-center d-block mx-auto">Your orders</h2>
+{% if delivery_info == "empty" %}
   <h3>You currently do not have any orders, check again soon!</h3>
-  {% else %}
+{% else %}
   <div class="overflow-visible">
     <table class="table table-hover">
       <thead>
@@ -22,17 +27,22 @@ mySolar {% endblock %} {% block body %}
         </tr>
       </thead>
       <tbody>
-        {% for del_info in delivery_info %} {% if del_info.delivered == False %}
+        {% for del_info in delivery_info %} 
+        
+        <!-- If not delivered -->
+        {% if del_info.delivered == False %}
         <tr class="table-active">
-          {% elif del_info.delivered == True %}
-        </tr>
-
+        
+        <!-- If delivered -->
+        {% elif del_info.delivered == True %}
         <tr class="table-success">
-          {% elif del_info.processed == True %}
-        </tr>
 
+        <!-- Else if processed -->
+        {% elif del_info.processed == True %}
         <tr class="table-info">
-          {% endif %}
+        
+        {% endif %}
+
           <td>{{del_info.item.title}}</td>
           <td>{{del_info.amount_of_item}}</td>
           <td>{{del_info.delivery_date}}</td>
@@ -55,6 +65,6 @@ mySolar {% endblock %} {% block body %}
     </table>
   </div>
 
-  {% endif %}
+{% endif %}
 </div>
 {% endblock %}

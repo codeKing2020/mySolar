@@ -297,7 +297,7 @@ class UserTestCase(TestCase):
         # assert that shop has nothing
         # check that store.html has no results
         self.assertContains(
-            response, "There are no products in this category yet")
+            response, "There are no products here yet, check again soon!")
 
     def test_product_info(self):
         product = Product.objects.get(title=self.product1Dict['title'])
@@ -546,7 +546,7 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         # assert that we get a "not found" resposne/error
         self.assertContains(
-            response, "There are no products in this category yet")
+            response, "There are no products here yet, check again soon!")
         # assert it doesn't contain a product from another category
         self.assertNotContains(response, "solar ting 2")
 

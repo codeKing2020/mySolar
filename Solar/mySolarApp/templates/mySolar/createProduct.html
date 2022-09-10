@@ -1,4 +1,5 @@
-{% extends 'mySolar/layout.html' %} {% block title %} Edit Product {% endblock%}
+{% extends 'mySolar/layout.html' %} 
+{% block title %} Edit Product {% endblock%}
 {% block body %}
 <form
   action="{% url 'editProduct' productPK 'edit' %}"

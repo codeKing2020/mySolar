@@ -1,34 +1,48 @@
-{% extends 'mySolar/layout.html' %}
+{% extends 'mySolar/layout.html' %} 
 
+{% block title %} 
+Login | mySolar 
+{% endblock %} 
 
 {% block body %}
 <div id="login">
-    <div class="container mt-5">
+  <div class="container mt-5">
+    <h2>Login</h2>
 
-        <h2>Login</h2>
-
-        {% if message %}
-        <div class="fs-4 pt-2 text-light text-center bg-danger border">
-            <p>{{ message }}</p>
-        </div>
-        {% endif %}
-        <!-- http://127.0.0.1:8000/login?next=/beSeller -->
-        <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
-            {% if request.GET.next %}
-            <input type="hidden" name="next" value="{{ request.GET.next }}" />
-            {% endif %}
-            {% csrf_token %}
-            <div class="form-group">
-                <input class="form-control" type="text" name="username" placeholder="Username">
-            </div>
-            <div class="form-group">
-                <input class="form-control" type="password" name="password" placeholder="Password">
-            </div>
-            <input class="btn btn-primary" type="submit" value="Login">
-        </form>
-
-        <p>Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+    {% if message %}
+    <div class="fs-4 pt-2 text-light text-center bg-danger border">
+      <p>{{ message }}</p>
     </div>
+    {% endif %}
+    <!-- http://127.0.0.1:8000/login?next=/beSeller -->
+    <form action="{% url 'login' %}" method="post">
+      {% csrf_token %} {% if request.GET.next %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}" />
+      {% endif %} {% csrf_token %}
+      <div class="form-group">
+        <input
+          class="form-control"
+          type="text"
+          name="username"
+          placeholder="Username" 
+          required
+        />
+      </div>
+      <div class="form-group">
+        <input
+          class="form-control"
+          type="password"
+          name="password"
+          placeholder="Password" 
+          required
+        />
+      </div>
+      <input class="btn btn-primary" type="submit" value="Login" />
+    </form>
+
+    <p>
+      Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

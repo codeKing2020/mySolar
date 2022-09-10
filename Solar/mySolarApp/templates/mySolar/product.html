@@ -26,19 +26,19 @@ More Info
     <p>{{product.long_desc}}</p>
     {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
     <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
-      <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
-      {% else %}
-      <form action="{% url 'orderProduct' product.pk  %}" method="post" class="form text-center border p-3">
-        {% csrf_token %}
-        {% if error_message %}
-        <div class="bg-danger text-white text-center p-2 m-2">
-          {{error_message}}
-        </div>
-        {% endif %}
-        {{productForm}}
-        <input type="submit" value="Order item" class="btn btn-success">
-      </form>
+    <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
+    {% else %}
+    <form action="{% url 'orderProduct' product.pk  %}" method="post" class="form text-center border p-3">
+      {% csrf_token %}
+      {% if error_message %}
+      <div class="bg-danger text-white text-center p-2 m-2">
+        {{error_message}}
+      </div>
       {% endif %}
+      {{productForm}}
+      <input type="submit" value="Order item" class="btn btn-success">
+    </form>
+    {% endif %}
   </section>
 </div>
 {% endblock %}

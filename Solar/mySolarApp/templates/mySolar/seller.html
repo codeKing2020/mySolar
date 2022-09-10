@@ -1,5 +1,10 @@
-{% extends 'mySolar/layout.html' %} {% block title %} More info about
-{{seller.name}} {% endblock %} {% block body %}
+{% extends 'mySolar/layout.html' %} 
+
+{% block title %} 
+More info about {{seller.name}} 
+{% endblock %} 
+
+{% block body %}
 <h2>About seller</h2>
 <p>Name: {{seller.name}}</p>
 <p>Joined on: <b>{{seller.shopkeeper.date_joined}}</b></p>

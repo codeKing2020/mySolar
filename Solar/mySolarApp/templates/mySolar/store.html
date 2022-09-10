@@ -39,9 +39,9 @@ Store | mySolar
           </h6>
           <p class="card-text">{{ product.short_desc }}</p>
           {% if product.seller.shopkeeper.username.lower == request.user.username.lower %}
-          <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
+            <a href="{% url 'editProduct' product.pk 'edit' %}" class="btn btn-outline-success">Edit</button>
             <a href="{% url 'editProduct' product.pk 'delete' %}" class="btn btn-outline-primary">Delete</a>
-            {% endif %}
+          {% endif %}
         </div>
       </div>
     </a>
