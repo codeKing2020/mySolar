@@ -9,13 +9,15 @@ Store | mySolar
 <h1 class="text-center bg-primary text-white p-3 m-2">Store</h1>
 
 {% if categoryForm %}
-<form action="categoryProducts" method="POST" class="w-50 text-center d-flex flex-column">
+<div class="mx-auto">
+<form action="categoryProducts" method="POST" class="text-center d-flex flex-column">
   {% csrf_token %}
   <div class="p-2">
     {{categoryForm}}
   </div>
-  <button type="submit" class="btn btn-success">Search</button>
+  <button type="submit" class="btn btn-success w-25 text-center">Search</button>
 </form>
+</div>
 {% endif %}
 <br />
 
@@ -26,10 +28,10 @@ Store | mySolar
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mb-3">
   <!-- START FOR LOOP HERE -->
   {% for product in products %}
-  <div class="col mb-4">
+  <div class="col mb-4 mx-2 my-2">
     <a href="{% url 'product' product.pk %}">
       <div class="card" style="width: 18rem">
-        <img src="{% static 'respect1000.jpg' %}" class="card-img-top" alt="..." />
+        <img src="{% static 'noImage-light.png' %}" class="card-img-top" alt="..." />
         <div class="card-body">
           <h5 class="card-title">{{ product.title }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ product.price }}</h6>

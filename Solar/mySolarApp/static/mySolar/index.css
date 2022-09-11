@@ -53,7 +53,7 @@ form {
 
 /* FOR INDEX: MAIN BODY */
 
-.featurette {
+.featurette-div {
   padding: 5%;
   font-size: 1.3rem;
   display: flex;
@@ -62,10 +62,6 @@ form {
   align-items: center;
   /* try adding baseline instead */
   /* ADD flex wrap functionalitites for media queries */
-}
-
-.center-button {
-  text-align: center;
 }
 
 /* FOR ABOUT PAGE */
